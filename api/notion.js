@@ -14,6 +14,7 @@ export default async function handler(req, res) {
     'Notion-Version': '2022-06-28',
   };
 
+  // 텍스트 추출 함수 — 볼드 유지 (본문용)
   function extractRichText(richTextArr) {
     if (!richTextArr) return '';
     return richTextArr.map(t => {
@@ -21,6 +22,12 @@ export default async function handler(req, res) {
       if (t.annotations?.bold) str = `**${str}**`;
       return str;
     }).join('');
+  }
+
+  // 헤딩 텍스트 추출 — 볼드 무시 (헤딩 자체가 강조이므로)
+  function extractHeadingText(richTextArr) {
+    if (!richTextArr) return '';
+    return richTextArr.map(t => t.plain_text || '').join('');
   }
 
   // 데이터베이스 하위 페이지 목록 조회
@@ -72,13 +79,13 @@ export default async function handler(req, res) {
           const type = block.type;
 
           if (type === 'heading_1') {
-            markdown += '# ' + extractRichText(block.heading_1?.rich_text) + '\n';
+            markdown += '# ' + extractHeadingText(block.heading_1?.rich_text) + '\n';
           } else if (type === 'heading_2') {
-            markdown += '## ' + extractRichText(block.heading_2?.rich_text) + '\n';
+            markdown += '## ' + extractHeadingText(block.heading_2?.rich_text) + '\n';
           } else if (type === 'heading_3') {
-            markdown += '### ' + extractRichText(block.heading_3?.rich_text) + '\n';
+            markdown += '### ' + extractHeadingText(block.heading_3?.rich_text) + '\n';
           } else if (type === 'heading_4') {
-            markdown += '#### ' + extractRichText(block.heading_4?.rich_text) + '\n';
+            markdown += '#### ' + extractHeadingText(block.heading_4?.rich_text) + '\n';
           } else if (type === 'paragraph') {
             const text = extractRichText(block.paragraph?.rich_text);
             if (text.trim()) markdown += text + '\n';
@@ -92,7 +99,7 @@ export default async function handler(req, res) {
             const text = extractRichText(block.callout?.rich_text);
             if (text.trim()) markdown += '> ' + text + '\n';
           } else if (type === 'toggle') {
-            const title = extractRichText(block.toggle?.rich_text);
+            const title = extractHeadingText(block.toggle?.rich_text);
             if (title.trim()) markdown += '#### ' + title + '\n';
           } else if (type === 'child_page') {
             // 하위 페이지 — 재귀적으로 읽기
