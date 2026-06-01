@@ -288,7 +288,7 @@ canvas { display: block; }
   font-size: 13px; color: #ccc; line-height: 1.9;
   white-space: pre-wrap; word-break: keep-all;
 }
-#detail-content strong { color: #f0f0f0; font-weight: 600; }
+#detail-content strong { color: #ff9f43; font-weight: 700; }
 
 /* ── 하단 상태 표시 ── */
 #status {
@@ -473,19 +473,19 @@ function getColor(cat) { return CAT_COLORS[cat] || CAT_COLORS.sub; }
 function cleanLabel(str) {
   if (!str) return '';
   return str
-    .replace(/\*\*([^*]+)\*\*/g, '$1')   // **볼드** → 텍스트만
-    .replace(/\*([^*]+)\*/g, '$1')        // *이탤릭* → 텍스트만
-    .replace(/[\[\]#`]/g, '')             // [], #, ` 제거
-    .replace(/\{[^}]*\}/g, '')            // {color=...} 제거
-    .replace(/→|⇒|—/g, '')               // 화살표 제거
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/[\[\]#`]/g, '')
+    .replace(/\{[^}]*\}/g, '')
+    .replace(/→|⇒|—/g, '')
     .trim();
 }
 
-// desc 정리 — **볼드** 는 그대로 유지, 나머지 마크다운 기호만 제거
+// desc 정리 — **볼드** 는 그대로 유지 (상세창에서 주황 굵은 글씨로 표현)
 function cleanDesc(str) {
   if (!str) return '';
   return str
-    .replace(/\*([^*]+)\*/g, '$1')       // *이탤릭* 제거 (볼드 ** 는 건드리지 않음)
+    .replace(/\*([^*]+)\*/g, '$1')
     .replace(/[\[\]#`]/g, '')
     .replace(/\{[^}]*\}/g, '')
     .trim();
@@ -517,12 +517,13 @@ function parseMarkdown(text, rootTitle) {
     let r = level === 0 ? 0 : (level === 1 ? 140 : (level === 2 ? 240 : 360));
     r += (Math.random() - 0.5) * 40;
 
+    const isFirstRoot = (level === 0 && nodes.length === 0);
     const n = {
       id, label, cat: finalCat, desc: cleanDesc(desc), date,
       x: W/2 + Math.cos(angle)*r,
       y: H/2 + Math.sin(angle)*r,
       vx: 0, vy: 0,
-      level, fixed: level === 0
+      level, fixed: isFirstRoot
     };
     nodes.push(n);
     nodeMap[id] = n;
@@ -760,6 +761,14 @@ async function startGraph() {
 
     buildGraph();
     loop();
+
+    // 첫 페이지도 목록에 표시
+    const list = document.getElementById('added-pages-list');
+    const item = document.createElement('div');
+    item.className = 'added-page-item';
+    item.dataset.pageId = pageId;
+    item.innerHTML = `<span>🏠 ${data.title || pageId}</span><button class="added-page-remove" onclick="reloadWithoutPage('${pageId}', this.parentElement)">✕</button>`;
+    list.appendChild(item);
   } catch(e) {
     errEl.textContent = e.message;
     errEl.style.display = 'block';
@@ -814,6 +823,20 @@ async function addPage() {
     btn.disabled = false;
     btn.textContent = '+ 노드 불러오기';
   }
+}
+
+// 첫 페이지 제거 — 전체 초기화
+function reloadWithoutPage(pageId, el) {
+  if (!confirm('첫 페이지를 제거하면 그래프 전체가 초기화돼요. 계속할까요?')) return;
+  _addedPageIds.clear();
+  _savedToken = '';
+  nodes = []; edges = []; Object.keys(nodeMap).forEach(k => delete nodeMap[k]);
+  document.getElementById('added-pages-list').innerHTML = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('input-token').value = '';
+  document.getElementById('input-page-id').value = '';
+  document.getElementById('login-btn').disabled = false;
+  document.getElementById('login-btn').textContent = '그래프 생성하기';
 }
 
 // 추가된 페이지 제거
