@@ -544,7 +544,8 @@ function parseMarkdown(text, rootTitle) {
     const headerMatch = line.match(/^(#{1,4})\s+(.*)$/);
     if (headerMatch) {
       const depth = headerMatch[1].length;
-      let lbl = headerMatch[2].trim();
+      // 헤딩 텍스트에서 ** 볼드 마크다운 제거
+      let lbl = headerMatch[2].trim().replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*\*/g, '');
 
       let cat = 'sub';
       if (depth === 1) {
@@ -591,46 +592,8 @@ function parseMarkdown(text, rootTitle) {
       continue;
     }
 
-    // ── 볼드체 단독 라인: **텍스트** 또는 **텍스트** 내용...
-    const boldMatch = line.match(/^\*\*([^*]{2,80})\*\*(.*)$/);
-    if (boldMatch) {
-      let lbl = boldMatch[1].trim();
-      let inlineDesc = boldMatch[2].replace(/^[\s:：—→⇒]+/, '').trim();
-
-      // 날짜 추출
-      let nDate = '';
-      const dateInLbl = lbl.match(/-\s*(\d{4}\.\d{2}(?:\.\d{2})?)\s*-/);
-      if (dateInLbl) { nDate = dateInLbl[1]; lbl = lbl.replace(dateInLbl[0], ''); }
-
-      // 이어지는 본문 수집
-      let descLines = inlineDesc ? [inlineDesc] : [];
-      let nextIdx = i + 1;
-      while (nextIdx < lines.length) {
-        let nextLine = lines[nextIdx].trim();
-        if (!nextLine) { nextIdx++; continue; }
-        if (nextLine.startsWith('#')) break;
-        if (/^\*\*[^*]{2,}\*\*/.test(nextLine)) break;
-        const dateOnly = nextLine.match(/^-\s*(\d{4}\.\d{2}(?:\.\d{2})?)\s*-$/);
-        if (dateOnly) { nDate = nDate || dateOnly[1]; nextIdx++; continue; }
-        descLines.push(nextLine);
-        nextIdx++;
-      }
-      const finalDesc = descLines.join('\n').substring(0, 500);
-
-      let parentId = null;
-      for (let d = 4; d >= 0; d--) {
-        if (currentParents[d]) { parentId = currentParents[d]; break; }
-      }
-      if (!parentId) parentId = rootId;
-
-      const parentLevel = nodeMap[parentId]?.level || 0;
-      const curId = addNode(lbl, 'sub', finalDesc, parentId, nDate, parentLevel + 1);
-      // 볼드 노드는 현재 부모 레벨의 하위로 등록 (헤딩 스택 건드리지 않음)
-      if (curId && parentLevel + 1 <= 4) currentParents[parentLevel + 1] = curId;
-
-      if (nextIdx > i + 1) i = nextIdx - 1;
-      continue;
-    }
+    // 볼드 텍스트(**텍스트**)는 노드로 만들지 않음 — 헤딩(#~####)만 노드로 처리
+    // 볼드 강조 문구는 상위 노드의 desc에 자동 포함되어 상세 패널에서 주황색으로 표시됨
   }
 
   // ── 원형 초기 배치 (방법 A) ──
