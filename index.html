@@ -669,25 +669,43 @@ function mergeGraph(title, markdown, pageId) {
   const result = parseMarkdown(markdown, title);
   const idMap = {};
   const prefix = 'p' + Date.now() + '_';
-  const trackId = pageId || title; // 제거 시 추적용 ID
+  const trackId = pageId || title;
 
-  // 기존 그래프 루트 위치 파악 — 새 페이지는 그 반대편에 배치
-  const existingRoot = nodes.find(n => n.level === 0 && !n.sourcePageId);
-  const existingCount = nodes.filter(n => n.level === 0 && n.sourcePageId).length;
-  // 기존 루트 기준 균등 각도로 새 루트 배치
-  const placementAngle = existingRoot
-    ? (Math.PI * 2 / Math.max(existingCount + 1, 1)) * existingCount
-    : 0;
-  const placementDist = 700; // 기존 350 → 700으로 늘려서 새 페이지가 멀리 생성
-  const newRootX = existingRoot
-    ? existingRoot.x + Math.cos(placementAngle) * placementDist
-    : W/2 + 350;
-  const newRootY = existingRoot
-    ? existingRoot.y + Math.sin(placementAngle) * placementDist
-    : H/2;
+  // 기존 그래프 전체 경계(bounding box) 계산
+  const existingNodes = nodes.filter(n => n.visible !== false);
+  let newRootX, newRootY;
 
-  // 1단계: 노드 ID 부여 + 위치 재조정 (원형 배치 기준 이동)
-  // parseMarkdown 내부에서 이미 원형 배치됨 — 오프셋만 적용
+  if (existingNodes.length === 0) {
+    newRootX = W/2 + 500;
+    newRootY = H/2;
+  } else {
+    const minX = Math.min(...existingNodes.map(n => n.x));
+    const maxX = Math.max(...existingNodes.map(n => n.x));
+    const minY = Math.min(...existingNodes.map(n => n.y));
+    const maxY = Math.max(...existingNodes.map(n => n.y));
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+
+    // 기존 그래프 크기 + 여유 거리만큼 떨어진 위치에 배치
+    const graphW = maxX - minX;
+    const graphH = maxY - minY;
+    const margin = 300; // 여유 거리
+
+    // 추가된 페이지 수에 따라 각도 분산 (0°, 90°, 180°, 270° 순환)
+    const existingCount = nodes.filter(n => n.level === 0 && n.sourcePageId).length;
+    const angles = [0, Math.PI, Math.PI/2, -Math.PI/2, Math.PI*0.75, -Math.PI*0.75, Math.PI*0.25, -Math.PI*0.25];
+    const angle = angles[existingCount % angles.length];
+
+    // 각도 방향으로 bounding box 끝에서 margin만큼 더 나간 위치
+    const distX = (graphW / 2 + margin) * Math.abs(Math.cos(angle));
+    const distY = (graphH / 2 + margin) * Math.abs(Math.sin(angle));
+    const dist = Math.max(distX + distY, 600);
+
+    newRootX = centerX + Math.cos(angle) * dist;
+    newRootY = centerY + Math.sin(angle) * dist;
+  }
+
+  // 새 페이지 원형 배치 기준점 → 계산된 위치로 이동
   const newRoot = result.nodes.find(n => n.level === 0);
   const offsetX = newRoot ? newRootX - newRoot.x : 0;
   const offsetY = newRoot ? newRootY - newRoot.y : 0;
