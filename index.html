@@ -680,7 +680,7 @@ function mergeGraph(title, markdown, pageId) {
   const placementAngle = existingRoot
     ? (Math.PI * 2 / Math.max(existingCount + 1, 1)) * existingCount
     : 0;
-  const placementDist = 350;
+  const placementDist = 700; // 기존 350 → 700으로 늘려서 새 페이지가 멀리 생성
   const newRootX = existingRoot
     ? existingRoot.x + Math.cos(placementAngle) * placementDist
     : W/2 + 350;
@@ -727,13 +727,14 @@ function mergeGraph(title, markdown, pageId) {
   setTimeout(fitGraph, 800);
 }
 
-// 그래프 전체를 화면에 맞게 자동 조정
+// 그래프 전체를 화면에 맞게 자동 조정 — 부드러운 애니메이션
+let _fitAnimId = null;
+
 function fitGraph() {
   if (nodes.length === 0) return;
   const visibleNodes = nodes.filter(n => n.visible);
   if (visibleNodes.length === 0) return;
 
-  // 사이드바 너비 고려
   const sidebarWidth = document.getElementById('sidebar').classList.contains('collapsed') ? 0 : 230;
   const detailWidth = document.getElementById('detail-panel').classList.contains('open') ? 400 : 0;
   const availW = W - sidebarWidth - detailWidth - 40;
@@ -748,16 +749,36 @@ function fitGraph() {
   const graphW = maxX - minX || 1;
   const graphH = maxY - minY || 1;
 
-  const scaleX = availW / graphW;
-  const scaleY = availH / graphH;
-  const newScale = Math.min(scaleX, scaleY, 1.5) * 0.85;
-
+  const targetScale = Math.min(availW / graphW, availH / graphH, 1.5) * 0.82;
   const centerX = (minX + maxX) / 2;
   const centerY = (minY + maxY) / 2;
+  const targetPanX = (offsetLeft + availW / 2) - W/2 - (centerX - W/2) * targetScale;
+  const targetPanY = (availH / 2 + 20) - H/2 - (centerY - H/2) * targetScale;
 
-  scale = newScale;
-  panX = (offsetLeft + availW / 2) - W/2 - (centerX - W/2) * scale;
-  panY = (availH / 2 + 20) - H/2 - (centerY - H/2) * scale;
+  // 이전 애니메이션 취소
+  if (_fitAnimId) cancelAnimationFrame(_fitAnimId);
+
+  const DURATION = 600; // ms
+  const startTime = performance.now();
+  const startScale = scale;
+  const startPanX = panX;
+  const startPanY = panY;
+
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  function animate(now) {
+    const t = Math.min((now - startTime) / DURATION, 1);
+    const e = easeInOut(t);
+    scale = startScale + (targetScale - startScale) * e;
+    panX = startPanX + (targetPanX - startPanX) * e;
+    panY = startPanY + (targetPanY - startPanY) * e;
+    if (t < 1) {
+      _fitAnimId = requestAnimationFrame(animate);
+    } else {
+      _fitAnimId = null;
+    }
+  }
+  _fitAnimId = requestAnimationFrame(animate);
 }
 
 function buildGraph() {
