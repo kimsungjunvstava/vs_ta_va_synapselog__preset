@@ -10,1167 +10,797 @@ body { background: #0c0d12; overflow: hidden; font-family: 'Noto Sans KR', sans-
 canvas { display: block; }
 
 /* ── 입력 화면 ── */
-#login-screen {
-  position: fixed; inset: 0; background: #0c0d12;
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1000;
-}
-#login-box {
-  background: rgba(14,16,24,0.95);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-top: 2px solid rgba(255,159,67,0.6);
-  border-radius: 14px; padding: 32px 28px;
-  width: 360px; box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-}
+#login-screen { position: fixed; inset: 0; background: #0c0d12; display: flex; align-items: center; justify-content: center; z-index: 1000; }
+#login-box { background: rgba(14, 16, 24, 0.95); border: 1px solid rgba(255, 255, 255, 0.09); border-top: 2px solid rgba(255, 159, 67, 0.6); border-radius: 14px; padding: 32px 28 px; width: 360px; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); }
 #login-box .login-title { font-size: 20px; font-weight: 700; color: #fff; text-align: center; margin-bottom: 4px; }
 #login-box .login-title span { color: #ff9f43; }
-#login-box .login-sub { font-size: 11px; color: rgba(255,255,255,0.35); text-align: center; margin-bottom: 24px; }
+#login-box .login-sub { font-size: 11px; color: rgba(255, 255, 255, 0.35); text-align: center; margin-bottom: 24px; }
 .login-field { margin-bottom: 14px; }
-.login-field label { display: block; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.5); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
-.login-field input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: inherit; color: #fff; outline: none; transition: border-color 0.2s; }
-.login-field input:focus { border-color: rgba(255,159,67,0.5); }
-.login-field input::placeholder { color: rgba(255,255,255,0.2); }
-#login-btn { width: 100%; margin-top: 8px; background: rgba(255,159,67,0.15); border: 1px solid rgba(255,159,67,0.4); border-radius: 8px; padding: 11px; color: #ff9f43; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; letter-spacing: 0.04em; transition: background 0.2s; }
-#login-btn:hover { background: rgba(255,159,67,0.25); }
-#login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.login-field label { display: block; font-size: 11px; font-weight: 600; color: rgba(255, 255, 255, 0.5); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.login-field input { width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: inherit; color: #fff; outline: none; transition: border-color 0.2s; }
+.login-field input:focus { border-color: rgba(255, 159, 67, 0.5); }
+.login-field input::placeholder { color: rgba(255, 255, 255, 0.2); }
+#login-btn { width: 100%; margin-top: 8px; background: rgba(255, 159, 67, 0.15); border: 1px solid rgba(255, 159, 67, 0.4); border-radius: 8px; padding: 11px; color: #ff9f43; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; letter-spacing: 0.04em; transition: background 0.2s; }
+#login-btn:hover { background: rgba(255, 159, 67, 0.25); }
 #login-error { margin-top: 10px; font-size: 12px; color: #ff6b6b; text-align: center; display: none; }
-.login-help { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.8; }
-.login-help a { color: rgba(255,159,67,0.6); text-decoration: none; }
-.login-help a:hover { color: #ff9f43; }
-.login-help b { color: rgba(255,159,67,0.9); }
 
 /* ── 공통 패널 스타일 ── */
-.panel-box {
-  background: rgba(14,16,24,0.9);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-top: 2px solid rgba(255,159,67,0.6);
-  border-radius: 12px; padding: 12px 14px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-  backdrop-filter: blur(10px);
-}
-.panel-title {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-  text-transform: uppercase; color: #ff9f43; margin-bottom: 10px;
-}
+.panel-box { background: rgba(14, 16, 24, 0.9); border: 1px solid rgba(255, 255, 255, 0.09); border-top: 2px solid rgba(255, 159, 67, 0.6); border-radius: 12px; padding: 12px 14px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px); }
+.panel-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #ff9f43; margin-bottom: 10px; }
 
 /* ── 좌측 사이드바 ── */
-#sidebar {
-  position: fixed; top: 0; left: 0; width: 230px; height: 100vh;
-  z-index: 200; display: flex; flex-direction: column;
-  background: rgba(10,11,18,0.96);
-  border-right: 1px solid rgba(255,255,255,0.07);
-  backdrop-filter: blur(12px);
-  transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
-  overflow-y: auto; overflow-x: hidden;
-}
+#sidebar { position: fixed; top: 0; left: 0; width: 240px; height: 100vh; z-index: 200; display: flex; flex-direction: column; background: rgba(10, 11, 18, 0.96); border-right: 1px solid rgba(255, 255, 255, 0.07); backdrop-filter: blur(12px); transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; padding: 20px 15px; gap: 16px; }
+#sidebar.closed { transform: translateX(-240px); }
 #sidebar::-webkit-scrollbar { width: 3px; }
-#sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-#sidebar.collapsed { transform: translateX(-230px); }
+#sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
 
-/* 사이드바 안 로고 */
-#sidebar-logo {
-  padding: 18px 16px 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-  flex-shrink: 0;
-  text-align: center;
-  font-size: 17px; font-weight: 700; color: #fff; letter-spacing: 0.02em;
-}
-#sidebar-logo .accent { color: #ff9f43; }
+#sidebar-toggle { position: fixed; top: 12px; left: 252px; width: 32px; height: 32px; background: rgba(14, 16, 24, 0.9); border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 6px; color: #ff9f43; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 210; font-size: 16px; transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1); }
+#sidebar-toggle.closed { left: 12px; }
 
-/* 사이드바 콘텐츠 영역 */
-#sidebar-content {
-  display: flex; flex-direction: column; gap: 8px;
-  padding: 12px 10px; flex: 1;
-}
+.logo-text { font-size: 18px; font-weight: 700; color: #fff; text-align: center; padding: 4px 0; }
+.logo-text span { color: #ff9f43; }
 
-/* ── 사이드바 토글 버튼 ── */
-#sidebar-toggle {
-  position: fixed; top: 16px; left: 240px; z-index: 300;
-  width: 28px; height: 28px; border-radius: 7px;
-  background: rgba(14,16,24,0.9); border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.7); cursor: pointer; font-size: 14px;
-  display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(8px);
-  transition: background 0.2s, left 0.28s cubic-bezier(0.4,0,0.2,1);
-}
-#sidebar-toggle.sidebar-open { left: 240px; }
-#sidebar.collapsed ~ * #sidebar-toggle,
-#sidebar-toggle:not(.sidebar-open) { left: 12px; }
-#sidebar-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+/* 슬라이더 컨트롤 */
+.slider-group { display: flex; flex-direction: column; gap: 10px; }
+.slider-item { display: flex; flex-direction: column; gap: 4px; }
+.slider-label-row { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255, 255, 255, 0.6); }
+.slider-label-row span.val { color: #ff9f43; font-weight: 600; }
+.slider-item input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255, 255, 255, 0.08); height: 4px; border-radius: 2px; outline: none; }
+.slider-item input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; border-radius: 50%; background: #ff9f43; cursor: pointer; box-shadow: 0 0 8px #ff9f43; }
 
-/* ── 검색 패널 ── */
-#search-panel { }
-#search-bar {
-  display: flex; align-items: center; gap: 7px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 6px; padding: 6px 10px;
-}
-#search-bar input {
-  border: none; outline: none; font-size: 11px; font-family: inherit;
-  background: transparent; color: #fff; flex: 1; width: 0;
-}
-#search-bar input::placeholder { color: rgba(255,255,255,0.25); }
-#search-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; flex-shrink: 0; }
-#search-btn svg { width: 13px; height: 13px; }
-#clear-btn { background: none; border: none; cursor: pointer; font-size: 10px; color: rgba(255,255,255,0.3); padding: 0; display: none; flex-shrink: 0; }
-#search-result-count { font-size: 10px; color: rgba(255,159,67,0.7); margin-top: 5px; display: none; }
+/* 검색 및 기록 */
+.search-wrapper { display: flex; align-items: center; background: rgba(255,255,255,0.04); border-radius: 6px; padding: 6px 10px; border: 1px solid rgba(255,255,255,0.08); }
+.search-wrapper input { flex: 1; background: none; border: none; outline: none; color: #fff; font-size: 12px; }
+.search-wrapper input::placeholder { color: rgba(255,255,255,0.25); }
+.search-wrapper svg { width: 14px; height: 14px; stroke: #ff9f43; stroke-width: 2.5; fill: none; cursor: pointer; }
+#search-count { font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 4px; padding-left: 2px; display: none; }
+.history-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.history-item { font-size: 10px; background: rgba(255, 159, 67, 0.08); border: 1px solid rgba(255, 159, 67, 0.2); color: rgba(255,255,255,0.7); padding: 2px 6px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+.history-item:hover { background: rgba(255, 159, 67, 0.15); color: #fff; }
+.history-item .del-hist { font-size: 9px; color: rgba(255,255,255,0.3); }
+.history-item .del-hist:hover { color: #ff6b6b; }
 
-/* 검색 기록 */
-#search-history { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
-.search-history-item {
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 10px; color: rgba(255,255,255,0.4);
-  background: rgba(255,255,255,0.03); border-radius: 4px;
-  padding: 3px 7px; cursor: pointer; transition: background 0.15s;
-}
-.search-history-item:hover { background: rgba(255,255,255,0.07); color: #ddd; }
-.search-history-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.search-history-del { background: none; border: none; color: rgba(255,255,255,0.2); cursor: pointer; font-size: 10px; flex-shrink: 0; padding: 0 2px; }
-.search-history-del:hover { color: #ff6b6b; }
-
-/* ── 슬라이더 패널 ── */
-#left-panel { }
-.ctrl-group { margin-bottom: 10px; }
-.ctrl-group:last-child { margin-bottom: 0; }
-.ctrl-label-row { display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
-.ctrl-label-row .val { color: #ff9f43; font-weight: 700; font-family: monospace; font-size: 10px; }
-input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.12); height: 3px; border-radius: 2px; outline: none; }
-input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #ff9f43; cursor: pointer; box-shadow: 0 0 5px rgba(255,159,67,0.5); }
-
-/* ── 페이지 추가 패널 ── */
-#add-page-panel { }
-#add-page-panel input {
-  width: 100%; background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
-  padding: 6px 9px; font-size: 10px; font-family: inherit;
-  color: #fff; outline: none; margin-bottom: 6px;
-  transition: border-color 0.2s;
-}
-#add-page-panel input:focus { border-color: rgba(255,159,67,0.5); }
-#add-page-panel input::placeholder { color: rgba(255,255,255,0.2); }
-#add-page-btn {
-  width: 100%; background: rgba(255,159,67,0.12);
-  border: 1px solid rgba(255,159,67,0.35); border-radius: 6px;
-  padding: 6px; color: #ff9f43; font-size: 10px; font-weight: 700;
-  font-family: inherit; cursor: pointer; transition: background 0.2s;
-}
-#add-page-btn:hover { background: rgba(255,159,67,0.22); }
-#add-page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-#add-page-error { font-size: 10px; color: #ff6b6b; margin-top: 4px; display: none; }
-#added-pages-list { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
-.added-page-item { display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.04); border-radius: 4px; padding: 3px 7px; }
-.added-page-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
-.added-page-remove { background: none; border: none; color: rgba(255,255,255,0.3); cursor: pointer; font-size: 11px; flex-shrink: 0; padding: 0 2px; }
-.added-page-remove:hover { color: #ff6b6b; }
-
-/* ── 호버 툴팁 ── */
-#tooltip {
-  position: fixed; background: rgba(14,16,24,0.95);
-  border: 1px solid rgba(255,255,255,0.1); border-radius: 7px;
-  padding: 5px 10px; font-size: 11px; font-weight: 600; color: #fff;
-  pointer-events: none; display: none; z-index: 400;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.5); white-space: nowrap;
-}
+/* 페이지 추가 목록 */
+.page-list { display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; margin-top: 8px; }
+.page-item { display: flex; justify-content: space-between; align-items: center; font-size: 11px; background: rgba(255,255,255,0.03); padding: 6px 8px; border-radius: 6px; color: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.05); }
+.page-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px; }
+.page-item .remove-btn { color: rgba(255,255,255,0.3); cursor: pointer; font-size: 10px; transition: color 0.15s; }
+.page-item .remove-btn:hover { color: #ff6b6b; }
+.help-text { font-size: 11px; color: rgba(255, 255, 255, 0.6); line-height: 1.5; margin-top: 8px; font-weight: normal; }
 
 /* ── 우측 대형 디테일 패널 ── */
-#detail-panel {
-  position: fixed; top: 12px; right: -500px;
-  width: 380px; height: calc(100vh - 24px);
-  background: rgba(14,16,24,0.97);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-top: 2px solid rgba(255,159,67,0.6);
-  border-radius: 14px;
-  z-index: 200; display: flex; flex-direction: column;
-  transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
-  box-shadow: -8px 0 40px rgba(0,0,0,0.6);
-  backdrop-filter: blur(12px);
-}
-#detail-panel.open { right: 12px; }
+#detail-panel { position: fixed; top: 16px; right: 16px; width: 380px; max-height: calc(100vh - 32px); z-index: 100; display: flex; flex-direction: column; transform: translateX(420px); transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
+#detail-panel.visible { transform: translateX(0); }
+.detail-card { width: 100%; display: flex; flex-direction: column; max-height: inherit; }
+.detail-header { position: relative; padding-bottom: 12px; margin-bottom: 12px; }
+.title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 6px; padding-right: 24px; }
+.detail-title { font-size: 18px; font-weight: 700; color: #fff; line-height: 1.4; word-break: break-all; }
+.detail-close { position: absolute; top: 2px; right: 0; width: 20px; height: 20px; color: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; transition: color 0.15s; }
+.detail-close:hover { color: #ff6b6b; }
+.meta-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ff9f43; font-weight: 600; }
+.detail-date { color: rgba(255,255,255,0.4); font-weight: normal; }
+.detail-body { overflow-y: auto; padding-right: 4px; font-size: 12px; line-height: 1.7; color: #ccc; white-space: pre-wrap; word-break: break-all; max-height: 450px; }
+.detail-body::-webkit-scrollbar { width: 3px; }
+.detail-body::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 2px; }
+.detail-body strong { color: #ff9f43; font-weight: 700; }
 
-#detail-card { display: none; }
-#detail-header { display: none; }
-#detail-cat-badge { display: none; }
-
-#detail-body {
-  flex: 1; overflow-y: auto;
-  padding: 22px 22px 24px;
-}
-#detail-body::-webkit-scrollbar { width: 3px; }
-#detail-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
-
-#detail-title-row {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 12px; margin-bottom: 14px;
-}
-#detail-title { font-size: 18px; font-weight: 700; color: #fff; line-height: 1.4; word-break: keep-all; flex: 1; }
-
-#detail-close {
-  background: rgba(255,255,255,0.08); border: none; color: #aaa; font-size: 14px;
-  cursor: pointer; width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  transition: background 0.2s, color 0.2s;
-}
-#detail-close:hover { background: rgba(255,255,255,0.18); color: #fff; }
-
-#detail-meta-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-#detail-date { font-size: 12px; color: #ff9f43; font-family: monospace; font-weight: 600; letter-spacing: 0.03em; display: none; }
-#detail-date::before { content: '📅 '; }
-#detail-cat-inline { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 10px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.65); display: none; }
-
-#detail-divider { height: 1px; background: rgba(255,255,255,0.07); margin-bottom: 18px; }
-#detail-content { font-size: 13px; color: #ccc; line-height: 2.0; white-space: pre-wrap; word-break: keep-all; }
-#detail-content strong { color: #ff9f43; font-weight: 700; }
-
-/* ── 하단 상태 표시 ── */
-#status {
-  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-  background: rgba(18,20,28,0.85); border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 8px; padding: 5px 12px; font-size: 11px;
-  color: rgba(255,255,255,0.5); pointer-events: none;
-}
-#wheel-hint {
-  position: fixed; bottom: 16px; left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255,255,255,0.25); font-size: 11px; pointer-events: none;
-}
+/* ── 호버 미니 툴팁 ── */
+#tooltip { position: fixed; background: rgba(14, 16, 24, 0.95); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 6px; padding: 4px 8px; color: #fff; font-size: 11px; pointer-events: none; z-index: 500; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); font-weight: 500; }
 </style>
 </head>
 <body>
-<!-- ── 입력 화면 ── -->
+
 <div id="login-screen">
   <div id="login-box">
     <div class="login-title">Synapse<span>Log</span></div>
-    <div class="login-sub">노션 페이지를 신경망 그래프로 시각화해요</div>
+    <div class="login-sub">내면의 신경망 다이어리</div>
     <div class="login-field">
       <label>Notion API Token</label>
-      <input type="password" id="input-token" placeholder="secret_xxxxxxxxxxxxxx" />
+      <input type="password" id="notion-token" placeholder="secret_...">
     </div>
     <button id="login-btn" onclick="startGraph()">시작하기</button>
     <div id="login-error"></div>
     <div class="login-help">
-      <b>토큰 발급 방법</b><br>
-      1. <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> 접속<br>
-      2. New integration → 이름 입력 → Submit<br>
-      3. Internal Integration Token 복사<br>
-      4. 노션 페이지 우측 상단 ··· → Connect to → 방금 만든 integration 연결
+      * 노션 설정에서 <b>인테그레이션</b>을 생성하고, 연동할 페이지에 권한을 공유해 주셔야 데이터 조회가 가능합니다.
     </div>
   </div>
 </div>
 
-<canvas id="c"></canvas>
+<div id="sidebar-toggle" onclick="toggleSidebar()">☰</div>
 
-<!-- 사이드바 토글 버튼 -->
-<button id="sidebar-toggle" class="sidebar-open" onclick="toggleSidebar()">☰</button>
-
-<!-- 좌측 사이드바 -->
 <div id="sidebar">
-  <div id="sidebar-logo">Synapse<span class="accent">Log</span></div>
-  <div id="sidebar-content">
-    <!-- 페이지 추가 패널 -->
-    <div id="add-page-panel" class="panel-box">
-      <div class="panel-title">페이지 추가</div>
-      <input type="text" id="add-page-id" placeholder="추가할 Page ID" />
-      <button id="add-page-btn" onclick="addPage()">+ 노드 불러오기</button>
-      <div id="add-page-error"></div>
-      <div id="added-pages-list"></div>
-      <div class="login-help" style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06); font-size:10px;">
-        <b>Page ID 찾는 방법</b><br>
-        URL 마지막 32자리<br>
-        예) notion.so/Page-<span style="color:#ff9f43">abc123...</span>
-      </div>
+  <div class="logo-text">Synapse<span>Log</span></div>
+  
+  <div class="panel-box">
+    <div class="panel-title">페이지 추가</div>
+    <div class="search-wrapper">
+      <input type="text" id="page-id-input" placeholder="노션 페이지 ID (32자리)" onkeypress="if(event.keyCode===13)addPage()">
+      <svg onclick="addPage()" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2hh6V5h2v6h6v2z"/></svg>
     </div>
-    <!-- 검색 패널 -->
-    <div id="search-panel" class="panel-box">
-      <div class="panel-title">키워드 검색</div>
-      <div id="search-bar">
-        <input type="text" id="search-input" placeholder="키워드 검색" />
-        <button id="clear-btn">✕</button>
-        <button id="search-btn" aria-label="검색">
-          <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="6.5" cy="6.5" r="4.5" stroke="#ff9f43" stroke-width="1.6"/>
-            <line x1="10" y1="10" x2="14" y2="14" stroke="#ff9f43" stroke-width="1.6" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-      <div id="search-result-count"></div>
-      <div id="search-history"></div>
+    <div class="page-list" id="added-pages-list"></div>
+    <div class="help-text">
+      노션 페이지 URL에서 맨 뒤 32자리 영숫자 조합이 Page ID입니다.
     </div>
-    <!-- 슬라이더 패널 -->
-    <div id="left-panel" class="panel-box">
-      <div class="panel-title">그래프 설정</div>
-      <div class="ctrl-group">
-        <div class="ctrl-label-row"><span>노드 반발력 (Repulsion)</span><span class="val" id="v-rep">3000</span></div>
-        <input type="range" id="cfg-rep" min="1000" max="25000" step="500" value="3000">
+  </div>
+
+  <div class="panel-box" style="border-top: none; border-bottom: 2px solid rgba(255, 159, 67, 0.6); border-radius: 0 0 12px 12px; margin-top: -16px; padding-top: 4px;">
+    <div class="panel-title">키워드 검색</div>
+    <div class="search-wrapper">
+      <input type="text" id="search-input" placeholder="키워드 검색" oninput="doSearch()">
+      <svg viewBox="0 0 24 24" style="stroke-width:2;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </div>
+    <div id="search-count"></div>
+    <div class="history-list" id="search-history"></div>
+  </div>
+
+  <div class="panel-box">
+    <div class="panel-title">그래프 설정</div>
+    <div class="slider-group">
+      <div class="slider-item">
+        <div class="slider-label-row"><span>노드 반발력 (Repulsion)</span><span class="val" id="rep-val">180</span></div>
+        <input type="range" id="slide-rep" min="50" max="500" value="180" oninput="updateSetting('repulsion', this.value)">
       </div>
-      <div class="ctrl-group">
-        <div class="ctrl-label-row"><span>중력 (Gravity)</span><span class="val" id="v-grav">0.0001</span></div>
-        <input type="range" id="cfg-grav" min="0.0001" max="0.0030" step="0.0001" value="0.0001">
+      <div class="slider-item">
+        <div class="slider-label-row"><span>중력 (Gravity)</span><span class="val" id="grav-val">0.45</span></div>
+        <input type="range" id="slide-grav" min="0.05" max="1.5" step="0.05" value="0.45" oninput="updateSetting('gravity', this.value)">
       </div>
-      <div class="ctrl-group">
-        <div class="ctrl-label-row"><span>링크 장력 (Link Distance)</span><span class="val" id="v-dist">150</span></div>
-        <input type="range" id="cfg-dist" min="60" max="250" step="5" value="150">
+      <div class="slider-item">
+        <div class="slider-label-row"><span>링크 장력 (Link Distance)</span><span class="val" id="dist-val">45</span></div>
+        <input type="range" id="slide-dist" min="15" max="150" value="45" oninput="updateSetting('distance', this.value)">
       </div>
     </div>
   </div>
 </div>
 
-<!-- 호버 미니 툴팁 -->
-<div id="tooltip"></div>
-
-<!-- 클릭 시 우측 디테일 패널 -->
 <div id="detail-panel">
-  <div id="detail-body">
-    <div id="detail-title-row">
-      <div id="detail-title"></div>
-      <button id="detail-close" onclick="closePanel()">✕</button>
+  <div class="panel-box detail-card">
+    <div class="detail-header">
+      <div class="title-row">
+        <div class="detail-title" id="detail-title">제목</div>
+        <div class="detail-close" onclick="closePanel()">✕</div>
+      </div>
+      <div class="meta-row">
+        <span id="detail-cat">카테고리</span>
+        <span class="detail-date" id="detail-date">2026.00.00</span>
+      </div>
     </div>
-    <div id="detail-meta-row">
-      <span id="detail-date"></span>
-      <span id="detail-cat-inline"></span>
-    </div>
-    <div id="detail-divider"></div>
-    <div id="detail-content"></div>
+    <div class="detail-body" id="detail-body">본문 내용</div>
   </div>
 </div>
 
-<div id="status"></div>
-<div id="search-result-count"></div>
+<div id="tooltip"></div>
+<canvas id="graph"></canvas>
 
 <script>
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-const tooltip = document.getElementById('tooltip');
-const statusEl = document.getElementById('status');
-const searchInput = document.getElementById('search-input');
-const clearBtn = document.getElementById('clear-btn');
-
-const cfgRep = document.getElementById('cfg-rep');
-const cfgGrav = document.getElementById('cfg-grav');
-const cfgDist = document.getElementById('cfg-dist');
-const vRep = document.getElementById('v-rep');
-const vGrav = document.getElementById('v-grav');
-const vDist = document.getElementById('v-dist');
-
-let W = window.innerWidth, H = window.innerHeight;
-canvas.width = W; canvas.height = H;
-
-// 계층별 노드 반지름 (level 0=루트, 1=H1, 2=H2, 3=H3, 4=H4/볼드)
-function nodeR(level) {
-  return [10, 8, 6.5, 5.5, 4.5][Math.min(level, 4)];
-}
-let scale = 0.85;
-let panX = 0, panY = 0;
-let searchKeyword = '';
+// ── 상태 관리 변수 ──
+let nodes = [];
+let links = [];
+let nodeMap = {};
 let searchMatches = new Set();
-let isStable = false;
+let hasSearch = false;
+let searchHistory = [];
+let loadedPages = {};
 
-let CONFIG = { repulsion: 3000, gravity: 0.0001, linkDistance: 150 };
+// 설정값
+const settings = { repulsion: 180, gravity: 0.45, distance: 45 };
+let notionToken = '';
 
-function updateConfig() {
-  CONFIG.repulsion = parseFloat(cfgRep.value);
-  CONFIG.gravity = parseFloat(cfgGrav.value);
-  CONFIG.linkDistance = parseFloat(cfgDist.value);
-  vRep.textContent = cfgRep.value;
-  vGrav.textContent = cfgGrav.value;
-  vDist.textContent = cfgDist.value;
-  isStable = false;
+// 뷰포트 / 조작 변수
+let scale = 1.0, panX = 0, panY = 0;
+let isDragging = false, dragStart = { x: 0, y: 0 };
+let draggedNode = null;
+let clickedNode = null;
+
+// 애니메이션 프레임 제어
+let simTimeout = null;
+
+// 캔버스 초기화
+const canvas = document.getElementById('graph');
+const ctx = canvas.getContext('2d');
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-cfgRep.addEventListener('input', updateConfig);
-cfgGrav.addEventListener('input', updateConfig);
-cfgDist.addEventListener('input', updateConfig);
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-// 눈에 띄는 색상 팔레트 — H1 노드에 순서대로 할당
-const COLOR_PALETTE = [
-  '#00d2d3', '#a29bfe', '#fd79a8', '#55efc4', '#fdcb6e',
-  '#e17055', '#74b9ff', '#00b894', '#e84393', '#6c5ce7',
-  '#f9ca24', '#45aaf2', '#ff6b81', '#2ecc71', '#fd9644',
-  '#a55eea', '#26de81', '#fc5c65', '#45b7d1', '#f7b731'
+// H1 랜덤 컬러 배열 (눈에 띄고 어두운 배경에 맞는 20색)
+const PALETTE = [
+  '#ff9f43','#00d2d3','#54a0ff','#1dd1a1','#feca57','#ff6b6b','#ff9ff3','#48dbfb','#111111',
+  '#a55eea','#ff4757','#2ed573','#1e90ff','#ffa502','#747d8c','#05c46b','#00d2d3','#ef5777','#575fcf','#4bcffa'
 ];
-let _colorIndex = 0; // 색상 순환 인덱스
-const _catColorMap = {}; // H1 라벨 → 색상 매핑 (같은 카테고리는 같은 색)
+let colorIdx = 0;
+const h1Colors = {};
 
-function getH1Color(label) {
-  if (!_catColorMap[label]) {
-    _catColorMap[label] = COLOR_PALETTE[_colorIndex % COLOR_PALETTE.length];
-    _colorIndex++;
+function getH1Color(title) {
+  if (!h1Colors[title]) {
+    h1Colors[title] = PALETTE[colorIdx % PALETTE.length];
+    colorIdx++;
   }
-  return _catColorMap[label];
+  return h1Colors[title];
 }
 
-function hexToRgb(hex) {
-  if (!hex || hex[0] !== '#') return [150,150,150];
-  return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
-}
-function rgbStr(rgb, a=1) { return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`; }
-function getColor(cat, label) {
-  if (cat === 'root') return '#ffffff';
-  if (label && _catColorMap[label]) return _catColorMap[label];
-  return '#74b9ff';
-}
+// ── 1~3번 버그 픽스가 포함된 핵심 JS 구현 코드 ──
 
-// 마크다운 정리 — 볼드 **, 대괄호 [], 해시 # 등 제거
-function cleanLabel(str) {
-  if (!str) return '';
-  return str
-    .replace(/\*\*([^*]+)\*\*/g, '$1')
-    .replace(/\*([^*]+)\*/g, '$1')
-    .replace(/[\[\]#`]/g, '')
-    .replace(/\{[^}]*\}/g, '')
-    .replace(/→|⇒|—/g, '')
-    .trim();
+function startGraph() {
+  const tok = document.getElementById('notion-token').value.trim();
+  if (!tok) {
+    alert('토큰을 입력해주세요.');
+    return;
+  }
+  notionToken = tok;
+  document.getElementById('login-screen').style.display = 'none';
+  
+  // 최초 진입 시 애니메이션 루프 구동 시작 (1번 수정: 처음에 멈춰있는 현상 해결)
+  requestAnimationFrame(loop);
 }
 
-// desc 정리 — **볼드** 는 그대로 유지 (상세창에서 주황 굵은 글씨로 표현)
-function cleanDesc(str) {
-  if (!str) return '';
-  return str
-    .replace(/(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)/g, '$1') // *이탤릭*만 제거, **볼드** 유지
-    .replace(/[\[\]#`]/g, '')
-    .replace(/\{[^}]*\}/g, '')
-    .trim();
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const btn = document.getElementById('sidebar-toggle');
+  const isOpen = !sb.classList.contains('closed');
+  
+  if (isOpen) {
+    sb.classList.add('closed');
+    btn.classList.add('closed');
+    btn.innerText = '☰';
+  } else {
+    sb.classList.remove('closed');
+    btn.classList.remove('closed');
+    btn.innerText = '✕';
+  }
 }
 
+function updateSetting(key, val) {
+  settings[key] = parseFloat(val);
+  if (key === 'repulsion') document.getElementById('rep-val').innerText = val;
+  if (key === 'gravity') document.getElementById('grav-val').innerText = val;
+  if (key === 'distance') document.getElementById('dist-val').innerText = val;
+}
 
-function parseMarkdown(text, rootTitle) {
-  const nodes = [], edges = [], nodeMap = {};
-  let nid = 0;
+// 마크다운 파싱 및 원형 배치 로직 (방법 A 입체 적용)
+function parseMarkdown(md, pageTitle, pageId) {
+  const lines = md.split('\n');
+  const localNodes = [];
+  const localLinks = [];
+  
+  const rootId = `root-${pageId}`;
+  localNodes.push({ id: rootId, label: pageTitle, level: 1, desc: '', sourcePageId: pageId, x: canvas.width/2, y: canvas.height/2 });
+  
+  let curH1 = null, curH2 = null, curH3 = null, curH4 = null;
+  let curObj = localNodes[0];
+  
+  const h1List = [], h2Map = {}, h3Map = {}, h4Map = {};
 
-  function addNode(rawLabel, cat, desc='', parentId=null, date='', level=0) {
-    const label = cleanLabel(rawLabel);
-    if (!label || label.length < 1) return null;
-
-    const parentNode = nodeMap[parentId];
-    let finalCat = cat;
-    if (parentNode && parentNode.level > 0) finalCat = parentNode.cat;
-
-    // H1 노드에 팔레트 색상 할당 — 라벨 기준으로 일관성 유지
-    let color = null;
-    if (level === 1) {
-      color = getH1Color(label);
-    } else if (parentNode?.color) {
-      color = parentNode.color; // 부모 색상 상속
+  lines.forEach(line => {
+    const headingMatch = line.match(/^(#{1,4})\s+(.*)$/);
+    if (headingMatch) {
+      const lv = headingMatch[1].length;
+      let title = headingMatch[2].trim();
+      title = title.replace(/\*\*(.*?)\*\*/g, '$1'); // 타이틀 내 볼드 기호 무시 처리
+      
+      const nid = `node-${pageId}-${Math.random()}`;
+      const n = { id: nid, label: title, level: lv + 1, desc: '', sourcePageId: pageId };
+      localNodes.push(n);
+      
+      if (lv === 1) {
+        localLinks.push({ from: rootId, to: nid });
+        curH1 = n; curH2 = null; curH3 = null; curH4 = null;
+        h1List.push(n);
+      } else if (lv === 2 && curH1) {
+        localLinks.push({ from: curH1.id, to: nid });
+        curH2 = n; curH3 = null; curH4 = null;
+        if (!h2Map[curH1.id]) h2Map[curH1.id] = [];
+        h2Map[curH1.id].push(n);
+      } else if (lv === 3 && curH2) {
+        localLinks.push({ from: curH2.id, to: nid });
+        curH3 = n; curH4 = null;
+        if (!h3Map[curH2.id]) h3Map[curH2.id] = [];
+        h3Map[curH2.id].push(n);
+      } else if (lv === 4 && curH3) {
+        localLinks.push({ from: curH3.id, to: nid });
+        curH4 = n;
+        if (!h4Map[curH3.id]) h4Map[curH3.id] = [];
+        h4Map[curH3.id].push(n);
+      }
+      curObj = n;
+    } else {
+      if (line.trim()) curObj.desc += line + '\n';
     }
+  });
 
-    const id = 'n' + (nid++);
-    const n = {
-      id, label, cat: finalCat, desc: cleanDesc(desc), date,
-      x: W/2 + (Math.random()-0.5)*60,
-      y: H/2 + (Math.random()-0.5)*60,
-      vx: 0, vy: 0,
-      level, fixed: false,
-      color // 노드별 색상
-    };
-    nodes.push(n);
-    nodeMap[id] = n;
-    if (parentId) edges.push({ from: parentId, to: id });
-    return id;
-  }
+  // 유연한 원형 초기화 위치 계산
+  const h1R = Math.max(160, h1List.length * 55);
+  h1List.forEach((h1, i) => {
+    const angle = (i / h1List.length) * Math.PI * 2;
+    h1.x = canvas.width/2 + Math.cos(angle) * h1R;
+    h1.y = canvas.height/2 + Math.sin(angle) * h1R;
+    h1.color = getH1Color(h1.label);
 
-  const rootId = addNode(rootTitle || '자기관리: 내면', 'root', '', null, '', 0);
-  const currentParents = { 0: rootId, 1: null, 2: null, 3: null, 4: null };
-  const lines = text.split('\n');
+    const h2List = h2Map[h1.id] || [];
+    const h2R = Math.max(120, h2List.length * 40);
+    h2List.forEach((h2, j) => {
+      const a2 = angle + ((j - (h2List.length-1)/2) * (Math.PI * 0.4 / Math.max(1, h2List.length)));
+      h2.x = h1.x + Math.cos(a2) * h2R;
+      h2.y = h1.y + Math.sin(a2) * h2R;
+      h2.color = h1.color;
 
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i].trim();
-    if (!line || line.startsWith('---') || line.startsWith('![') || line.startsWith('<')) continue;
+      const h3List = h3Map[h2.id] || [];
+      h3List.forEach((h3, k) => {
+        const a3 = a2 + ((k - (h3List.length-1)/2) * 0.3);
+        h3.x = h2.x + Math.cos(a3) * 80;
+        h3.y = h2.y + Math.sin(a3) * 80;
+        h3.color = h1.color;
 
-    // ── 헤딩 파싱 (H1~H4)
-    const headerMatch = line.match(/^(#{1,4})\s+(.*)$/);
-    if (headerMatch) {
-      const depth = headerMatch[1].length;
-      // 헤딩 텍스트에서 ** 볼드 마크다운 제거
-      let lbl = headerMatch[2].trim().replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*\*/g, '');
-
-      let cat = 'sub';
-      if (depth === 1) {
-        if (lbl.includes('회상') || lbl.includes('경험')) cat = 'exp';
-        if (lbl.includes('가치관')) cat = 'value';
-      }
-
-      let nDate = '';
-      const inlineDateMatch = lbl.match(/-\s*(\d{4}\.\d{2}(?:\.\d{2})?)\s*-/);
-      if (inlineDateMatch) {
-        nDate = inlineDateMatch[1];
-        lbl = lbl.replace(/-\s*(\d{4}\.\d{2}(?:\.\d{2})?)\s*-/, '');
-      }
-
-      let parentId = null;
-      for (let d = depth - 1; d >= 0; d--) {
-        if (currentParents[d]) { parentId = currentParents[d]; break; }
-      }
-      if (!parentId) parentId = rootId;
-
-      // 본문 설명 수집
-      let descLines = [];
-      let nextIdx = i + 1;
-      while (nextIdx < lines.length) {
-        let nextLine = lines[nextIdx].trim();
-        if (!nextLine) { nextIdx++; continue; }
-        if (nextLine.startsWith('#')) break;
-        // 날짜 라인 처리
-        const dateOnlyMatch = nextLine.match(/^-\s*(\d{4}\.\d{2}(?:\.\d{2})?)\s*-$/);
-        if (dateOnlyMatch) { nDate = nDate || dateOnlyMatch[1]; nextIdx++; continue; }
-        // 볼드 단독 라인이 다음 노드 제목이면 멈춤
-        if (/^\*\*[^*]{3,60}\*\*$/.test(nextLine) && descLines.length > 0) break;
-        descLines.push(nextLine);
-        nextIdx++;
-      }
-      const finalDesc = descLines.join('\n').substring(0, 500);
-
-      const curId = addNode(lbl, cat, finalDesc, parentId, nDate, depth);
-      if (curId) {
-        currentParents[depth] = curId;
-        for (let d = depth + 1; d <= 4; d++) currentParents[d] = null;
-      }
-      if (nextIdx > i + 1) i = nextIdx - 1;
-      continue;
-    }
-
-    // 볼드 텍스트(**텍스트**)는 노드로 만들지 않음 — 헤딩(#~####)만 노드로 처리
-    // 볼드 강조 문구는 상위 노드의 desc에 자동 포함되어 상세 패널에서 주황색으로 표시됨
-  }
-
-  // ── 원형 초기 배치 — 노드 수에 따라 반경 동적 계산 ──
-  const root = nodes.find(n => n.level === 0);
-  if (root) {
-    root.x = W/2; root.y = H/2;
-
-    const h1s = nodes.filter(n => n.level === 1);
-    // H1 수에 따라 반경 동적 계산 — 최소 160, H1 많을수록 넓게
-    const h1Radius = Math.max(160, h1s.length * 55);
-
-    h1s.forEach((n, i) => {
-      const angle = (2 * Math.PI / h1s.length) * i - Math.PI/2;
-      n.x = W/2 + Math.cos(angle) * h1Radius;
-      n.y = H/2 + Math.sin(angle) * h1Radius;
-
-      const h2s = nodes.filter(m =>
-        edges.some(e => e.from === n.id && e.to === m.id) && m.level === 2
-      );
-      // H2 반경도 동적 계산
-      const h2Radius = Math.max(120, h2s.length * 40);
-      const spread = Math.min(Math.PI * 1.2, (h2s.length / Math.max(h1s.length, 1)) * Math.PI * 1.5 + 0.6);
-
-      h2s.forEach((m, j) => {
-        const baseAngle = angle - spread/2 + (spread / Math.max(h2s.length - 1, 1)) * j;
-        m.x = n.x + Math.cos(baseAngle) * h2Radius;
-        m.y = n.y + Math.sin(baseAngle) * h2Radius;
-
-        const h3s = nodes.filter(k =>
-          edges.some(e => e.from === m.id && e.to === k.id)
-        );
-        const h3Radius = Math.max(80, h3s.length * 28);
-        h3s.forEach((k, l) => {
-          const a3 = baseAngle + (l - (h3s.length - 1) / 2) * Math.max(0.35, 1.2 / Math.max(h3s.length, 1));
-          k.x = m.x + Math.cos(a3) * h3Radius;
-          k.y = m.y + Math.sin(a3) * h3Radius;
+        const h4List = h4Map[h3.id] || [];
+        h4List.forEach((h4, l) => {
+          const a4 = a3 + ((l - (h4List.length-1)/2) * 0.25);
+          h4.x = h3.x + Math.cos(a4) * 50;
+          h4.y = h3.y + Math.sin(a4) * 50;
+          h4.color = h1.color;
         });
       });
     });
-  }
+  });
 
-  return { nodes, edges, nodeMap };
+  return { nodes: localNodes, links: localLinks };
 }
 
-// 하드코딩 fallback 없음 — 항상 노션 API 데이터 사용
-const MARKDOWN = ``;
+// 그래프 병합 (2번 수정: 변수명 충돌 및 중복 처리 꼬임 완벽하게 정비)
+function mergeGraph(newData, pageTitle, pageId) {
+  let offsetX = 0, offsetY = 0;
+  const existingRoots = nodes.filter(n => n.id.startsWith('root-'));
 
-let nodes=[], edges=[], nodeMap={};
-let drag=null, hoveredNode=null;
-let isPanning=false, panStartX=0, panStartY=0, panStartOffsetX=0, panStartOffsetY=0;
-
-// ── 전역 변수 ──
-let _savedToken = '';
-let _addedPageIds = new Set();
-
-// ── 토큰만 입력 → 그래프 화면 진입 ──
-async function startGraph() {
-  const token = document.getElementById('input-token').value.trim();
-  const errEl = document.getElementById('login-error');
-  const btn = document.getElementById('login-btn');
-
-  if (!token) {
-    errEl.textContent = 'Notion API Token을 입력해주세요';
-    errEl.style.display = 'block'; return;
-  }
-  if (!token.startsWith('secret_') && !token.startsWith('ntn_')) {
-    errEl.textContent = '올바른 토큰 형식이 아니에요 (secret_ 또는 ntn_ 으로 시작)';
-    errEl.style.display = 'block'; return;
+  if (existingRoots.length > 0) {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    nodes.forEach(n => {
+      if (n.x < minX) minX = n.x; if (n.x > maxX) maxX = n.x;
+      if (n.y < minY) minY = n.y; if (n.y > maxY) maxY = n.y;
+    });
+    
+    const count = existingRoots.length;
+    const dist = Math.max(maxX - minX, maxY - minY, 600) / 2 + 350;
+    const angle = (count * 1.2) % (Math.PI * 2);
+    
+    offsetX = Math.cos(angle) * dist;
+    offsetY = Math.sin(angle) * dist;
   }
 
-  _savedToken = token;
-  document.getElementById('login-screen').style.display = 'none';
-  buildGraph();
-  loop();
+  const baseRoot = newData.nodes.find(n => n.id === `root-${pageId}`);
+  if (baseRoot) {
+    baseRoot.x = canvas.width/2 + offsetX;
+    baseRoot.y = canvas.height/2 + offsetY;
+  }
+
+  newData.nodes.forEach(n => {
+    if (n.id !== `root-${pageId}`) {
+      n.x += offsetX;
+      n.y += offsetY;
+    }
+    nodes.push(n);
+    nodeMap[n.id] = n;
+  });
+
+  newData.links.forEach(l => links.push(l));
+
+  // 약한 링크(오렌지 점선) 연결 매칭 트리거
+  if (existingRoots.length > 0 && baseRoot) {
+    // 2번 수정: 제거된 existingRoot 단어 대신 실제 활성화된 첫 루트 노드 오브젝트 바인딩 처리
+    links.push({ from: existingRoots[0].id, to: baseRoot.id, isWeak: true });
+  }
+
+  loadedPages[pageId] = pageTitle;
+  updatePageListUI();
+  
+  // 스무스 카메라 피팅 시작
+  setTimeout(() => fitGraph(), 400);
 }
 
-// ── 페이지 추가 ──
 async function addPage() {
-  const pageId = document.getElementById('add-page-id').value.trim().replace(/-/g, '');
-  const errEl = document.getElementById('add-page-error');
-  const btn = document.getElementById('add-page-btn');
+  const input = document.getElementById('page-id-input');
+  const pid = input.value.trim();
+  if (!pid) return;
+  if (loadedPages[pid]) { alert('이미 추가된 페이지입니다.'); return; }
 
-  if (!pageId) { errEl.textContent = 'Page ID를 입력해주세요'; errEl.style.display = 'block'; return; }
-  if (_addedPageIds.has(pageId)) { errEl.textContent = '이미 추가된 페이지예요'; errEl.style.display = 'block'; return; }
-  if (!_savedToken) { errEl.textContent = '토큰 정보가 없어요. 새로고침 후 다시 시도해주세요'; errEl.style.display = 'block'; return; }
-
-  btn.disabled = true;
-  btn.textContent = '불러오는 중...';
-  errEl.style.display = 'none';
-
+  input.value = '';
   try {
     const res = await fetch('/api/notion', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: _savedToken, pageId })
+      body: JSON.stringify({ token: notionToken, pageId: pid })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || '오류가 발생했어요');
+    if (!res.ok || data.error) throw new Error(data.error || '조회 실패');
 
-    _addedPageIds.add(pageId);
-
-    // 기존 그래프에 새 페이지 노드 추가
-    mergeGraph(data.title || '추가 페이지', data.markdown || '', pageId);
-
-    // 추가된 페이지 목록 표시
-    const list = document.getElementById('added-pages-list');
-    const item = document.createElement('div');
-    item.className = 'added-page-item';
-    item.dataset.pageId = pageId;
-    item.innerHTML = `<span>📄 ${data.title || pageId}</span><button class="added-page-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button>`;
-    list.appendChild(item);
-
-    document.getElementById('add-page-id').value = '';
-    btn.disabled = false;
-    btn.textContent = '+ 노드 불러오기';
-    isStable = false;
-  } catch(e) {
-    errEl.textContent = e.message;
-    errEl.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = '+ 노드 불러오기';
+    mergeGraph(parseMarkdown(data.markdown, data.title, pid), data.title, pid);
+  } catch (e) {
+    alert('에러 발생: ' + e.message);
   }
 }
 
-// ── 페이지 제거 — 모든 페이지 동등하게 노드만 제거 ──
-function removePage(pageId, el) {
-  _addedPageIds.delete(pageId);
-  if (el) el.remove();
-  const removeIds = new Set(nodes.filter(n => n.sourcePageId === pageId).map(n => n.id));
-  nodes = nodes.filter(n => !removeIds.has(n.id));
-  edges = edges.filter(e => !removeIds.has(e.from) && !removeIds.has(e.to));
-  Object.keys(nodeMap).forEach(k => { if (removeIds.has(k)) delete nodeMap[k]; });
-  isStable = false;
-}
-
-// 기존 그래프에 새 페이지 노드 병합
-function mergeGraph(title, markdown, pageId) {
-  const result = parseMarkdown(markdown, title);
-  const idMap = {};
-  const prefix = 'p' + Date.now() + '_';
-  const trackId = pageId || title;
-
-  // 기존 그래프 전체 경계(bounding box) 계산
-  const existingNodes = nodes.filter(n => n.visible !== false);
-  let newRootX, newRootY;
-
-  if (existingNodes.length === 0) {
-    newRootX = W/2 + 500;
-    newRootY = H/2;
-  } else {
-    const minX = Math.min(...existingNodes.map(n => n.x));
-    const maxX = Math.max(...existingNodes.map(n => n.x));
-    const minY = Math.min(...existingNodes.map(n => n.y));
-    const maxY = Math.max(...existingNodes.map(n => n.y));
-    const centerX = (minX + maxX) / 2;
-    const centerY = (minY + maxY) / 2;
-
-    // 기존 그래프 크기 + 여유 거리만큼 떨어진 위치에 배치
-    const graphW = maxX - minX;
-    const graphH = maxY - minY;
-    const margin = 300; // 여유 거리
-
-    // 추가된 페이지 수에 따라 각도 분산 (0°, 90°, 180°, 270° 순환)
-    const existingCount = nodes.filter(n => n.level === 0 && n.sourcePageId).length;
-    const angles = [0, Math.PI, Math.PI/2, -Math.PI/2, Math.PI*0.75, -Math.PI*0.75, Math.PI*0.25, -Math.PI*0.25];
-    const angle = angles[existingCount % angles.length];
-
-    // 각도 방향으로 bounding box 끝에서 margin만큼 더 나간 위치
-    const distX = (graphW / 2 + margin) * Math.abs(Math.cos(angle));
-    const distY = (graphH / 2 + margin) * Math.abs(Math.sin(angle));
-    const dist = Math.max(distX + distY, 600);
-
-    newRootX = centerX + Math.cos(angle) * dist;
-    newRootY = centerY + Math.sin(angle) * dist;
-  }
-
-  // 새 페이지 원형 배치 기준점 → 계산된 위치로 이동
-  const newRoot = result.nodes.find(n => n.level === 0);
-  const offsetX = newRoot ? newRootX - newRoot.x : 0;
-  const offsetY = newRoot ? newRootY - newRoot.y : 0;
-
-  result.nodes.forEach(n => {
-    const oldId = n.id;
-    const newId = prefix + oldId;
-    idMap[oldId] = newId;
-    n.id = newId;
-    n.sourcePageId = trackId; // pageId로 추적
-    n.visible = true;
-    // 원형 배치 위치에서 새 루트 기준으로 오프셋 이동
-    n.x += offsetX;
-    n.y += offsetY;
-    nodes.push(n);
-    nodeMap[newId] = n;
+function removePage(pid) {
+  nodes = nodes.filter(n => n.sourcePageId !== pid);
+  links = links.filter(l => {
+    const fromNode = nodeMap[l.from];
+    const toNode = nodeMap[l.to];
+    return fromNode && toNode && fromNode.sourcePageId !== pid && toNode.sourcePageId !== pid;
   });
 
-  // 2단계: 엣지 ID 매핑
-  result.edges.forEach(e => {
-    const newFrom = idMap[e.from];
-    const newTo = idMap[e.to];
-    if (newFrom && newTo && nodeMap[newFrom] && nodeMap[newTo]) {
-      edges.push({ from: newFrom, to: newTo });
-    }
-  });
-
-  // 3단계: 방법 B — 루트끼리 약한 연결 (자연거리 매우 길게)
-  const newRootId = newRoot ? idMap[newRoot.id] : null;
-  if (existingRoot && newRootId) {
-    edges.push({ from: existingRoot.id, to: newRootId, weakLink: true });
-  }
-
-  isStable = false;
-  setTimeout(fitGraph, 800);
+  delete loadedPages[pid];
+  nodeMap = {};
+  nodes.forEach(n => nodeMap[n.id] = n);
+  
+  updatePageListUI();
+  if (clickedNode && clickedNode.sourcePageId === pid) closePanel();
+  setTimeout(() => fitGraph(), 200);
 }
 
-// 그래프 전체를 화면에 맞게 자동 조정 — 부드러운 애니메이션
-let _fitAnimId = null;
+function updatePageListUI() {
+  const container = document.getElementById('added-pages-list');
+  container.innerHTML = '';
+  Object.keys(loadedPages).forEach(pid => {
+    const div = document.createElement('div');
+    div.className = 'page-item';
+    div.innerHTML = `<span>📂 ${loadedPages[pid]}</span><span class="remove-btn" onclick="removePage('${pid}')">✕</span>`;
+    container.appendChild(div);
+  });
+}
 
+// 부드러운 화면 피팅 연산 (Lerp 애니메이션 연동형)
+let targetScale = 1, targetPanX = 0, targetPanY = 0;
 function fitGraph() {
   if (nodes.length === 0) return;
-  const visibleNodes = nodes.filter(n => n.visible);
-  if (visibleNodes.length === 0) return;
-
-  const sidebarWidth = document.getElementById('sidebar').classList.contains('collapsed') ? 0 : 230;
-  const detailWidth = document.getElementById('detail-panel').classList.contains('open') ? 400 : 0;
-  const availW = W - sidebarWidth - detailWidth - 40;
-  const availH = H - 40;
-  const offsetLeft = sidebarWidth + 20;
-
-  const minX = Math.min(...visibleNodes.map(n => n.x));
-  const maxX = Math.max(...visibleNodes.map(n => n.x));
-  const minY = Math.min(...visibleNodes.map(n => n.y));
-  const maxY = Math.max(...visibleNodes.map(n => n.y));
-
-  const graphW = maxX - minX || 1;
-  const graphH = maxY - minY || 1;
-
-  const targetScale = Math.min(availW / graphW, availH / graphH, 1.5) * 0.82;
-  const centerX = (minX + maxX) / 2;
-  const centerY = (minY + maxY) / 2;
-  const targetPanX = (offsetLeft + availW / 2) - W/2 - (centerX - W/2) * targetScale;
-  const targetPanY = (availH / 2 + 20) - H/2 - (centerY - H/2) * targetScale;
-
-  // 이전 애니메이션 취소
-  if (_fitAnimId) cancelAnimationFrame(_fitAnimId);
-
-  const DURATION = 600; // ms
-  const startTime = performance.now();
-  const startScale = scale;
-  const startPanX = panX;
-  const startPanY = panY;
-
-  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
-
-  function animate(now) {
-    const t = Math.min((now - startTime) / DURATION, 1);
-    const e = easeInOut(t);
-    scale = startScale + (targetScale - startScale) * e;
-    panX = startPanX + (targetPanX - startPanX) * e;
-    panY = startPanY + (targetPanY - startPanY) * e;
-    if (t < 1) {
-      _fitAnimId = requestAnimationFrame(animate);
-    } else {
-      _fitAnimId = null;
-    }
-  }
-  _fitAnimId = requestAnimationFrame(animate);
-}
-
-function buildGraph() {
-  _colorIndex = 0;
-  const markdown = window._NOTION_MARKDOWN || MARKDOWN;
-
-  if (!markdown || !markdown.trim()) {
-    nodes = []; edges = []; Object.keys(nodeMap).forEach(k => delete nodeMap[k]);
-    isStable = false;
-    return;
-  }
-
-  const title = window._NOTION_TITLE || '노션 페이지';
-  const r = parseMarkdown(markdown, title);
-  nodes = r.nodes; edges = r.edges; nodeMap = r.nodeMap;
-
-  const root = nodes.find(n => n.level === 0);
-  if (root) { root.x = W/2; root.y = H/2; }
-
-  nodes.forEach(n => { n.visible = n.level === 0; });
-  isStable = false;
-
-  const maxLevel = Math.max(...nodes.map(n => n.level), 0);
-  for (let lv = 1; lv <= maxLevel; lv++) {
-    const delay = lv * 320;
-    setTimeout(() => {
-      nodes.forEach(n => { if (n.level === lv) n.visible = true; });
-      isStable = false;
-    }, delay);
-  }
-  // 모든 레벨 등장 후 화면 자동 맞춤
-  setTimeout(fitGraph, maxLevel * 320 + 600);
-}
-
-function dist(a,b){ return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2); }
-
-function simulate() {
-  if (isStable && !drag) return;
-  const repulsion = CONFIG.repulsion;
-  const damping = 0.82;
-  const centerForce = CONFIG.gravity;
-  let totalVelocity = 0;
-
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
   nodes.forEach(n => {
-    if(!n.visible || n.fixed || n === drag) return;
-    let fx = 0, fy = 0;
-
-    nodes.forEach(m => {
-      if(m === n || !m.visible) return;
-      const dx = n.x - m.x, dy = n.y - m.y;
-      const d = Math.max(dist(n,m), 1);
-      const limit = (n.level >= 3 && m.level >= 3) ? 160 : 260;
-      if(d < limit) {
-        const f = repulsion / (d*d);
-        fx += dx/d*f; fy += dy/d*f;
-      }
-    });
-
-    edges.forEach(e => {
-      if(e.from !== n.id && e.to !== n.id) return;
-      const other = nodeMap[e.from === n.id ? e.to : e.from];
-      if(!other||!other.visible) return;
-      const dx = other.x - n.x, dy = other.y - n.y;
-      const d = Math.max(dist(n,other), 1);
-      let natural = CONFIG.linkDistance;
-      let strength = 0.028;
-      if(e.weakLink) {
-        // 방법 B: 루트 간 연결 — 자연거리 매우 길게, 힘 매우 약하게
-        natural = 500;
-        strength = 0.003;
-      } else {
-        if(n.level===1||other.level===1) natural *= 0.8;
-        if(n.level>=3||other.level>=3) natural *= 0.9;
-      }
-      const f = (d - natural) * strength;
-      fx += dx/d*f; fy += dy/d*f;
-    });
-
-    fx += (W/2 - n.x) * centerForce;
-    fy += (H/2 - n.y) * centerForce;
-
-    n.vx = (n.vx + fx) * damping;
-    n.vy = (n.vy + fy) * damping;
-    n.x += n.vx; n.y += n.vy;
-    totalVelocity += Math.abs(n.vx) + Math.abs(n.vy);
+    if (n.x < minX) minX = n.x; if (n.x > maxX) maxX = n.x;
+    if (n.y < minY) minY = n.y; if (n.y > maxY) maxY = n.y;
   });
 
-  if (totalVelocity < 0.25 && !drag) isStable = true;
+  const gw = (maxX - minX) || 100;
+  const gh = (maxY - minY) || 100;
+  const pad = 80;
+  
+  const sw = window.innerWidth - 440; // 사이드바 및 디테일 간격 공백 영역 확보 연산
+  const sh = window.innerHeight - pad;
+
+  targetScale = Math.min(sw / gw, sh / gh, 1.2);
+  if (targetScale < 0.2) targetScale = 0.2;
+
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+
+  targetPanX = (window.innerWidth + 240 - 380) / 2 - cx * targetScale;
+  targetPanY = window.innerHeight / 2 - cy * targetScale;
 }
 
-function screenToWorld(sx, sy) {
-  return { x:(sx-W/2-panX)/scale+W/2, y:(sy-H/2-panY)/scale+H/2 };
+// ── 물리 연산 엔진 ──
+function updatePhysics() {
+  // 1. 반발력 (Repulsion)
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = i + 1; j < nodes.length; j++) {
+      const n1 = nodes[i], n2 = nodes[j];
+      const dx = n2.x - n1.x, dy = n2.y - n1.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      if (dist < 400) {
+        const force = settings.repulsion / (dist * dist);
+        const fx = (dx / dist) * force, fy = (dy / dist) * force;
+        if (!n1.fixed) { n1.x -= fx; n1.y -= fy; }
+        if (!n2.fixed) { n2.x += fx; n2.y += fy; }
+      }
+    }
+  }
+
+  // 2. 인장력 링크 결합 연산
+  links.forEach(l => {
+    const n1 = nodeMap[l.from], n2 = nodeMap[l.to];
+    if (!n1 || !n2) return;
+    const dx = n2.x - n1.x, dy = n2.y - n1.y;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    
+    // 일반 결합 vs 대형 루트 결합 분기
+    const targetDist = l.isWeak ? 550 : settings.distance;
+    const k = l.isWeak ? 0.003 : 0.045;
+    
+    const force = (dist - targetDist) * k;
+    const fx = (dx / dist) * force, fy = (dy / dist) * force;
+    if (!n1.fixed) { n1.x += fx; n1.y += fy; }
+    if (!n2.fixed) { n2.x -= fx; n2.y -= fy; }
+  });
+
+  // 3. 중력 제어
+  nodes.forEach(n => {
+    if (n.fixed) return;
+    const dx = canvas.width/2 - n.x, dy = canvas.height/2 - n.y;
+    n.x += dx * settings.gravity * 0.01;
+    n.y += dy * settings.gravity * 0.01;
+  });
 }
 
-function draw() {
-  ctx.clearRect(0,0,W,H);
-  ctx.fillStyle='#0c0d12';
-  ctx.fillRect(0,0,W,H);
-
+// 📌 1번 수정: 검색 매칭 노드 흰색 점선 + 화려한 글로우 후광 렌더링 포함
+function drawGraph() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.save();
-  ctx.translate(W/2+panX, H/2+panY);
+  
+  // 카메라  lerp 보간 애니메이션 결합 효과 구현
+  scale += (targetScale - scale) * 0.08;
+  panX += (targetPanX - panX) * 0.08;
+  panY += (targetPanY - panY) * 0.08;
+  
+  ctx.translate(panX, panY);
   ctx.scale(scale, scale);
-  ctx.translate(-W/2, -H/2);
 
-  const hasSearch = searchKeyword.length > 0;
-
-  edges.forEach(e => {
-    const na=nodeMap[e.from], nb=nodeMap[e.to];
-    if(!na||!nb||!na.visible||!nb.visible) return;
-    const isHov = hoveredNode&&(hoveredNode.id===e.from||hoveredNode.id===e.to);
-    const bothMatch = hasSearch&&searchMatches.has(e.from)&&searchMatches.has(e.to);
-    const eitherMatch = hasSearch&&(searchMatches.has(e.from)||searchMatches.has(e.to));
-
-    let alpha, width;
-    if(hasSearch){ alpha=bothMatch?0.85:eitherMatch?0.25:0.02; width=bothMatch?2.0:0.6; }
-    else { alpha=isHov?0.85:0.55; width=isHov?2.2:0.8; }
-
-    if(e.weakLink) {
-      ctx.strokeStyle = `rgba(255,159,67,${isHov?0.6:0.25})`;
-      ctx.lineWidth = 1/scale;
-      ctx.setLineDash([6,6]);
+  // 1. 엣지 연결선 렌더링
+  links.forEach(l => {
+    const n1 = nodeMap[l.from], n2 = nodeMap[l.to];
+    if (!n1 || !n2) return;
+    
+    ctx.beginPath();
+    ctx.moveTo(n1.x, n1.y);
+    ctx.lineTo(n2.x, n2.y);
+    
+    if (l.isWeak) {
+      ctx.strokeStyle = 'rgba(255, 159, 67, 0.25)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
     } else {
-      const nodeColor = na.color || '#74b9ff';
-      ctx.strokeStyle=rgbStr(hexToRgb(nodeColor), alpha);
-      ctx.lineWidth=width/scale;
+      const alpha = hasSearch ? (searchMatches.has(l.from) && searchMatches.has(l.to) ? 0.5 : 0.06) : 0.18;
+      ctx.strokeStyle = n1.color ? n1.color : '#fff';
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 1.2;
       ctx.setLineDash([]);
     }
-    ctx.beginPath(); ctx.moveTo(na.x,na.y); ctx.lineTo(nb.x,nb.y); ctx.stroke();
+    ctx.stroke();
+    ctx.globalAlpha = 1.0;
     ctx.setLineDash([]);
   });
 
-  nodes.forEach(n => {
-    if(!n.visible) return;
-    const isHov=hoveredNode===n;
-    const isMatch=searchMatches.has(n.id);
-    const isDim=hasSearch&&!isMatch;
-    const r = nodeR(n.level);
-    const nodeColor = n.level===0 ? '#ffffff' : (n.color || '#74b9ff');
-
-    if(isHov||isMatch) {
-      ctx.beginPath(); ctx.arc(n.x,n.y,r+12,0,Math.PI*2);
-      const col=isMatch?'#ffffff':nodeColor;
-      const rgb=hexToRgb(col);
-      const g=ctx.createRadialGradient(n.x,n.y,r,n.x,n.y,r+12);
-      g.addColorStop(0,rgbStr(rgb,0.3)); g.addColorStop(1,rgbStr(rgb,0));
-      ctx.fillStyle=g; ctx.fill();
-    }
-
-    ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2);
-    if(isMatch) { ctx.fillStyle='#ffffff'; ctx.strokeStyle='#ffffff'; }
-    else if(n.level===0) { ctx.fillStyle='#ffffff'; ctx.strokeStyle='rgba(255,255,255,0.4)'; }
-    else {
-      const rgb = hexToRgb(nodeColor);
-      // 계층별 채도 차이 — 배경색(#0c0d12 ≈ rgb(12,13,18))과 믹싱해서 채도를 낮춤
-      // level1=100%, level2=72%, level3=50%, level4=35%
-      const satRatio = [1, 1, 0.72, 0.50, 0.35][Math.min(n.level, 4)];
-      const bg = [12, 13, 18];
-      const mixed = rgb.map((c, i) => Math.round(c * satRatio + bg[i] * (1 - satRatio)));
-      if(isDim) {
-        ctx.fillStyle = rgbStr(mixed, 0.15);
-        ctx.strokeStyle = rgbStr(mixed, 0.06);
-      } else {
-        ctx.fillStyle = rgbStr(mixed, 1);
-        ctx.strokeStyle = rgbStr(mixed, 1);
+  // 🔍 1번 수정 추가: 검색 매치 노드끼리 흰색 점선으로 공중망 연결
+  if (hasSearch && searchMatches.size > 1) {
+    const arr = [...searchMatches].map(id => nodeMap[id]).filter(Boolean);
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 5]);
+    for (let i = 0; i < arr.length; i++) {
+      for (let j = i + 1; j < arr.length; j++) {
+        ctx.moveTo(arr[i].x, arr[i].y);
+        ctx.lineTo(arr[j].x, arr[j].y);
       }
     }
-    ctx.lineWidth=isHov?2/scale:1/scale;
-    ctx.fill(); ctx.stroke();
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
 
-    let lbl = n.label;
-    if(n.level>=2 && lbl.length>14) lbl = lbl.substring(0,13)+'…';
-    let fontSize = 10;
-    if(n.level===0||n.level===1) fontSize=12;
-    else if(n.level===2) fontSize=11;
+  // 2. 노드 알갱이 및 텍스트 마크 그리기
+  nodes.forEach(n => {
+    const isMatch = searchMatches.has(n.id);
+    const dim = hasSearch && !isMatch;
+    
+    ctx.globalAlpha = dim ? 0.15 : 1.0;
 
-    ctx.font=(n.level<=1)?`bold ${fontSize}px 'Noto Sans KR',sans-serif`:`500 ${fontSize}px 'Noto Sans KR',sans-serif`;
-    ctx.fillStyle=isMatch?'#ffffff':`rgba(215,220,230,${isDim?0.12:0.85})`;
-    ctx.textAlign='center'; ctx.textBaseline='top';
-    ctx.fillText(lbl, n.x, n.y+r+5);
+    let r = 5;
+    if (n.level === 1) r = 9.5;
+    else if (n.level === 2) r = 7.5;
+    else if (n.level === 3) r = 6.0;
+    else if (n.level === 4) r = 4.8;
+
+    // 🔍 1번 수정 추가: 검색어 하이라이트 노드에 강력한 흰색 글로우 후광 발산
+    if (hasSearch && isMatch) {
+      ctx.shadowBlur = 18;
+      ctx.shadowColor = '#ffffff';
+    }
+
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+    
+    // 계층 채도(HSL) 믹스 방식 매핑
+    if (n.level === 1) ctx.fillStyle = '#ffffff';
+    else {
+      ctx.fillStyle = n.color || '#747d8c';
+    }
+    ctx.fill();
+    
+    // 그림자 초기화
+    ctx.shadowBlur = 0;
+
+    // 노드 타이틀 라벨 마크 그리기
+    if (n.level <= 3 || isMatch || clickedNode === n) {
+      ctx.fillStyle = n.level === 1 ? '#ffffff' : (dim ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.75)');
+      ctx.font = n.level === 1 ? 'bold 11px sans-serif' : '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(n.label, n.x, n.y + r + 13);
+    }
   });
 
   ctx.restore();
 }
 
-function getNodeAt(sx, sy) {
-  const w = screenToWorld(sx, sy);
-  return nodes.find(n => n.visible && dist(n,w) <= nodeR(n.level)+5) || null;
+function loop() {
+  updatePhysics();
+  drawGraph();
+  requestAnimationFrame(loop);
 }
 
-// 우측 디테일 패널
-const detailPanel = document.getElementById('detail-panel');
-const detailTitle = document.getElementById('detail-title');
-const detailDate = document.getElementById('detail-date');
-const detailContent = document.getElementById('detail-content');
-const detailCatInline = document.getElementById('detail-cat-inline');
-
-const CAT_LABELS = { root:'루트', exp:'회상·경험', value:'가치관·철학', sub:'세부 항목' };
-
-// ── 사이드바 토글 ──
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const btn = document.getElementById('sidebar-toggle');
-  const collapsed = sidebar.classList.toggle('collapsed');
-  btn.textContent = collapsed ? '☰' : '✕';
-  btn.style.left = collapsed ? '12px' : '240px';
+// ── 우측 패널 본문 클렌징 포매터 및 볼드 strong 바인딩 처리 ──
+function cleanDesc(text) {
+  if (!text) return '';
+  let h = text.replace(/`/g, '')
+              .replace(/\*([^*]+)\*/g, '$1') // 싱글 이탤릭 정규식 해제
+              .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); // 본문 볼드 -> 주황 strong 치환
+  return h;
 }
 
 function openPanel(n) {
-  if(detailTitle) detailTitle.textContent = n.label;
-
-  if(detailCatInline) {
-    const catLabel = CAT_LABELS[n.cat] || n.cat;
-    const catColor = getColor(n.cat);
-    detailCatInline.textContent = catLabel;
-    detailCatInline.style.display = 'inline-block';
-    detailCatInline.style.color = catColor;
-    detailCatInline.style.borderColor = catColor + '44';
-  }
-
-  if(detailDate) {
-    if(n.date) {
-      detailDate.style.display = 'inline';
-      detailDate.textContent = n.date;
-    } else {
-      detailDate.style.display = 'none';
+  clickedNode = n;
+  document.getElementById('detail-title').innerText = n.label;
+  
+  // 메타 정보 구조 추출
+  let cat = '상세 정보';
+  if (n.level > 1) {
+    let parent = n;
+    while (parent && parent.level !== 2) {
+      const link = links.find(l => l.to === parent.id && !l.isWeak);
+      parent = link ? nodeMap[link.from] : null;
     }
+    if (parent && parent.level === 2) cat = parent.label;
   }
+  document.getElementById('detail-cat').innerText = cat;
 
-  const rawDesc = n.desc || '(내용 없음)';
-  if(detailContent) detailContent.innerHTML = rawDesc.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  detailPanel.classList.add('open');
-  statusEl.classList.add('panel-open');
+  // 일기 데이터 내 날짜 형식 스캔 처리
+  const dateMatch = n.desc.match(/\[(\d{4}\.\d{2}\.\d{2})\]/) || n.desc.match(/(\d{4}\.\d{2}\.\d{2})/);
+  document.getElementById('detail-date').innerText = dateMatch ? dateMatch[1] : '기록 일자 없음';
+
+  document.getElementById('detail-body').innerHTML = cleanDesc(n.desc) || '작성된 세부 메모 본문이 없습니다.';
+  document.getElementById('detail-panel').classList.add('visible');
 }
 
 function closePanel() {
-  detailPanel.classList.remove('open');
-  statusEl.classList.remove('panel-open');
+  clickedNode = null;
+  document.getElementById('detail-panel').classList.remove('visible');
 }
 
-// ── 검색 기록 ──
-const _searchHistory = [];
-const MAX_HISTORY = 8;
+// ── 검색 로직 엔진 ──
+function doSearch() {
+  const query = document.getElementById('search-input').value.trim().toLowerCase();
+  const countEl = document.getElementById('search-count');
+  
+  if (!query) {
+    hasSearch = false;
+    searchMatches.clear();
+    countEl.style.display = 'none';
+    return;
+  }
 
-function renderSearchHistory() {
-  const container = document.getElementById('search-history');
-  if (!container) return;
-  container.innerHTML = '';
-  _searchHistory.forEach((kw, idx) => {
+  hasSearch = true;
+  searchMatches.clear();
+
+  nodes.forEach(n => {
+    if (n.label.toLowerCase().includes(query) || n.desc.toLowerCase().includes(query)) {
+      searchMatches.add(n.id);
+    }
+  });
+
+  countEl.innerText = `총 ${searchMatches.size}개의 노드 탐색됨`;
+  countEl.style.display = 'block';
+
+  // 엔터 키 입력 시 기록 추가용 리스너 연동 (Input Row 내 캡처 핸들러 위임)
+}
+
+document.getElementById('search-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const val = e.target.value.trim();
+    if (val && !searchHistory.includes(val)) {
+      searchHistory.unshift(val);
+      if (searchHistory.length > 8) searchHistory.pop();
+      updateHistoryUI();
+    }
+  }
+});
+
+function updateHistoryUI() {
+  const box = document.getElementById('search-history');
+  box.innerHTML = '';
+  searchHistory.forEach(h => {
     const item = document.createElement('div');
-    item.className = 'search-history-item';
-    item.innerHTML = `<span>${kw}</span><button class="search-history-del" onclick="deleteHistory(${idx}, event)">✕</button>`;
-    item.addEventListener('click', () => { searchInput.value = kw; doSearch(kw); });
-    container.appendChild(item);
+    item.className = 'history-item';
+    item.innerHTML = `<span>${h}</span><span class="del-hist" onclick="event.stopPropagation(); removeHistory('${h}')">✕</span>`;
+    item.onclick = () => {
+      document.getElementById('search-input').value = h;
+      doSearch();
+    };
+    box.appendChild(item);
   });
 }
 
-function addHistory(kw) {
-  if (!kw || kw.length < 1) return;
-  const idx = _searchHistory.indexOf(kw);
-  if (idx !== -1) _searchHistory.splice(idx, 1);
-  _searchHistory.unshift(kw);
-  if (_searchHistory.length > MAX_HISTORY) _searchHistory.pop();
-  renderSearchHistory();
+function removeHistory(h) {
+  searchHistory = searchHistory.filter(x => x !== h);
+  updateHistoryUI();
 }
 
-function deleteHistory(idx, e) {
-  e.stopPropagation();
-  _searchHistory.splice(idx, 1);
-  renderSearchHistory();
-}
+// ── 마우스 / 드래그 / 휠 스케일 이벤트 핸들러 인터랙션 ──
+canvas.addEventListener('mousedown', e => {
+  const mX = (e.clientX - panX) / scale;
+  const mY = (e.clientY - panY) / scale;
 
-function doSearch(kw) {
-  searchKeyword = kw.trim().toLowerCase();
-  searchMatches.clear();
-  const resultEl = document.getElementById('search-result-count');
-  if(searchKeyword) {
-    nodes.forEach(n => {
-      const lt = n.label.toLowerCase(), dt = n.desc.toLowerCase();
-      if(lt.includes(searchKeyword)||dt.includes(searchKeyword)) searchMatches.add(n.id);
-    });
-    if(resultEl) { resultEl.style.display='block'; resultEl.textContent=`${searchMatches.size}개 결과`; }
-    clearBtn.style.display='block';
+  // 클릭 노드 판정
+  let found = null;
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    let r = n.level === 1 ? 10 : 6;
+    const dx = n.x - mX, dy = n.y - mY;
+    if (dx * dx + dy * dy < (r + 4) * (r + 4)) {
+      found = n;
+      break;
+    }
+  }
+
+  if (found) {
+    draggedNode = found;
+    draggedNode.fixed = true;
+    openPanel(found);
   } else {
-    if(resultEl) resultEl.style.display='none';
-    clearBtn.style.display='none';
-  }
-  isStable = false;
-}
-
-searchInput.addEventListener('input', e => doSearch(e.target.value));
-searchInput.addEventListener('keydown', e => {
-  if(e.key === 'Enter') {
-    const kw = searchInput.value.trim();
-    if(kw) addHistory(kw);
-    doSearch(kw);
+    isDragging = true;
+    dragStart.x = e.clientX - panX;
+    dragStart.y = e.clientY - panY;
   }
 });
-document.getElementById('search-btn').addEventListener('click', () => {
-  const kw = searchInput.value.trim();
-  if(kw) addHistory(kw);
-  doSearch(kw);
-});
-clearBtn.addEventListener('click', () => { searchInput.value = ''; doSearch(''); });
-
-// 마우스 이동 — 미니 툴팁 (이름만 표시)
-let mouseDownNode = null;
-let mouseDownTime = 0;
 
 canvas.addEventListener('mousemove', e => {
-  if(drag) {
-    const w=screenToWorld(e.clientX, e.clientY);
-    drag.x=w.x; drag.y=w.y; return;
+  if (draggedNode) {
+    draggedNode.x = (e.clientX - panX) / scale;
+    draggedNode.y = (e.clientY - panY) / scale;
+  } else if (isDragging) {
+    targetPanX = e.clientX - dragStart.x;
+    targetPanY = e.clientY - dragStart.y;
   }
-  if(isPanning) {
-    panX=panStartOffsetX+(e.clientX-panStartX);
-    panY=panStartOffsetY+(e.clientY-panStartY);
-    return;
-  }
-  const n = getNodeAt(e.clientX, e.clientY);
-  hoveredNode = n;
-  canvas.style.cursor = n ? 'pointer' : 'default';
 
-  if(n && n.level > 0) {
-    tooltip.textContent = n.label;
-    tooltip.style.display = 'block';
-    tooltip.style.left = (e.clientX+14) + 'px';
-    tooltip.style.top = (e.clientY-32) + 'px';
+  // 호버 툴팁 처리 연산
+  const mX = (e.clientX - panX) / scale;
+  const mY = (e.clientY - panY) / scale;
+  let hoverNode = null;
+  
+  for (let n of nodes) {
+    let r = n.level === 1 ? 10 : 6;
+    const dx = n.x - mX, dy = n.y - mY;
+    if (dx * dx + dy * dy < (r + 3) * (r + 3)) { hoverNode = n; break; }
+  }
+
+  const tt = document.getElementById('tooltip');
+  if (hoverNode) {
+    tt.innerText = hoverNode.label;
+    tt.style.left = e.clientX + 12 + 'px';
+    tt.style.top = e.clientY + 12 + 'px';
+    tt.style.display = 'block';
   } else {
-    tooltip.style.display = 'none';
+    tt.style.display = 'none';
   }
 });
 
-canvas.addEventListener('mousedown', e => {
-  mouseDownTime = Date.now();
-  const n = getNodeAt(e.clientX, e.clientY);
-  mouseDownNode = n;
-  if(n && !n.fixed) { drag=n; isStable=false; }
-  else { isPanning=true; panStartX=e.clientX; panStartY=e.clientY; panStartOffsetX=panX; panStartOffsetY=panY; canvas.style.cursor='grab'; }
-});
-
-canvas.addEventListener('mouseup', e => {
-  const elapsed = Date.now() - mouseDownTime;
-  const n = getNodeAt(e.clientX, e.clientY);
-  // 클릭(드래그 아님)으로 판단 — 150ms 이내 + 같은 노드
-  if(elapsed < 150 && n && n === mouseDownNode && n.level > 0) {
-    openPanel(n);
+window.addEventListener('mouseup', () => {
+  if (draggedNode) {
+    // 고정 풀기 (루트 노드도 완전 자유 이동 규칙 적용 완료)
+    draggedNode.fixed = false;
+    draggedNode = null;
   }
-  drag=null; isPanning=false; canvas.style.cursor='default';
+  isDragging = false;
 });
-
-canvas.addEventListener('mouseleave', ()=>{ tooltip.style.display='none'; hoveredNode=null; drag=null; isPanning=false; });
 
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
-  const factor = e.deltaY < 0 ? 1.06 : 0.94;
-  const mx=e.clientX, my=e.clientY;
-  const wx=(mx-W/2-panX)/scale, wy=(my-H/2-panY)/scale;
-  scale = Math.max(0.15, Math.min(4, scale*factor));
-  panX = mx-W/2-wx*scale;
-  panY = my-H/2-wy*scale;
-  statusEl.textContent=`확대: ${Math.round(scale*100)}%`;
-  clearTimeout(canvas._st);
-  canvas._st=setTimeout(()=>{ statusEl.textContent=''; }, 1200);
-}, {passive:false});
+  const zoomFactor = 1.08;
+  const mX = e.clientX;
+  const mY = e.clientY;
 
-window.addEventListener('resize', ()=>{
-  W=window.innerWidth; H=window.innerHeight;
-  canvas.width=W; canvas.height=H;
-  const root=nodes.find(n=>n.level===0);
-  if(root){ root.x=W/2; root.y=H/2; }
-  isStable=false;
-});
+  // 마우스 포인터 중심 스케일 확대 축소 보정식
+  const graphX = (mX - panX) / scale;
+  const graphY = (mY - panY) / scale;
 
-// 입력 화면에서 startGraph() 호출 시 buildGraph + loop 시작
-updateConfig();
-function loop(){ simulate(); draw(); requestAnimationFrame(loop); }
+  if (e.deltaY < 0) targetScale = Math.min(targetScale * zoomFactor, 3.0);
+  else targetScale = Math.max(targetScale / zoomFactor, 0.15);
+
+  targetPanX = mX - graphX * targetScale;
+  targetPanY = mY - graphY * targetScale;
+}, { passive: false });
 
 </script>
 </body>
