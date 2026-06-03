@@ -529,6 +529,7 @@ function parseMarkdown(text, rootTitle) {
 
   const rootId = addNode(rootTitle || '자기관리: 내면', 'root', '', null, '', 0);
   const currentParents = { 0: rootId, 1: null, 2: null, 3: null, 4: null };
+  let depthOffset = 0; // [DB_PAGE] 이후 헤딩 depth 보정값
   const lines = text.split('\n');
 
   for (let i = 0; i < lines.length; i++) {
@@ -538,7 +539,7 @@ function parseMarkdown(text, rootTitle) {
     // ── 헤딩 파싱 (H1~H4)
     const headerMatch = line.match(/^(#{1,4})\s+(.*)$/);
     if (headerMatch) {
-      const depth = headerMatch[1].length;
+      const depth = Math.min(headerMatch[1].length + depthOffset, 4);
       // 헤딩 텍스트에서 ** 볼드 마크다운 제거
       let lbl = headerMatch[2].trim().replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*\*/g, '');
 
@@ -604,11 +605,11 @@ function parseMarkdown(text, rootTitle) {
       const curId = addNode(lbl, 'sub', '', parentId, '', dbLevel);
 
       if (curId) {
-        // currentParents를 완전히 리셋하고 DB_PAGE를 새 기준점으로 설정
-        // 이후 오는 #,##,###,#### 헤딩이 이 노드 아래에서 시작
-        for (let d = 0; d <= 4; d++) currentParents[d] = null;
-        currentParents[0] = rootId;
         currentParents[dbLevel] = curId;
+        for (let d = dbLevel + 1; d <= 4; d++) currentParents[d] = null;
+        // 이후 오는 # 헤딩이 DB_PAGE 아래에서 시작되도록 offset 설정
+        // # → dbLevel+1, ## → dbLevel+2 등으로 보정
+        depthOffset = dbLevel;
       }
       continue;
     }
