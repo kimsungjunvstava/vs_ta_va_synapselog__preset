@@ -876,11 +876,11 @@ function mergeGraph(title, markdown, pageId) {
   setTimeout(() => {
     let waited = 0;
     function waitAndFit() {
-      if (isStable || waited > 5000) { fitGraph(); }
-      else { waited += 200; setTimeout(waitAndFit, 200); }
+      if (isStable || waited > 2000) { fitGraph(); }
+      else { waited += 100; setTimeout(waitAndFit, 100); }
     }
     waitAndFit();
-  }, 1000);
+  }, 600);
 }
 
 // 그래프 전체를 화면에 맞게 자동 조정 — 부드러운 애니메이션
@@ -966,16 +966,12 @@ function buildGraph() {
     }, delay);
   }
   // 모든 레벨 등장 후 시뮬레이션 안정 대기 → 화면 맞춤
-  const fitDelay = maxLevel * 320 + 800;
+  const fitDelay = maxLevel * 320 + 300;
   setTimeout(() => {
     let waited = 0;
     function waitAndFit() {
-      if (isStable || waited > 5000) {
-        fitGraph();
-      } else {
-        waited += 200;
-        setTimeout(waitAndFit, 200);
-      }
+      if (isStable || waited > 2000) { fitGraph(); }
+      else { waited += 100; setTimeout(waitAndFit, 100); }
     }
     waitAndFit();
   }, fitDelay);
@@ -1288,11 +1284,34 @@ function doSearch(kw) {
   searchMatches.clear();
   const resultEl = document.getElementById('search-result-count');
   if(searchKeyword) {
+    // 1차: 라벨/설명 매칭
+    const directMatches = new Set();
     nodes.forEach(n => {
+      if(!n.visible) return;
       const lt = n.label.toLowerCase(), dt = n.desc.toLowerCase();
-      if(lt.includes(searchKeyword)||dt.includes(searchKeyword)) searchMatches.add(n.id);
+      if(lt.includes(searchKeyword)||dt.includes(searchKeyword)) directMatches.add(n.id);
     });
-    if(resultEl) { resultEl.style.display='block'; resultEl.textContent=`${searchMatches.size}개 결과`; }
+
+    // 2차: 매칭 노드의 조상 노드도 포함 (경로 연결선을 위해)
+    function getAncestors(nodeId) {
+      const ancestors = [];
+      let cur = nodeId;
+      for(let i = 0; i < 10; i++) {
+        const parentEdge = edges.find(e => e.to === cur && !e.weakLink);
+        if(!parentEdge) break;
+        ancestors.push(parentEdge.from);
+        cur = parentEdge.from;
+      }
+      return ancestors;
+    }
+
+    directMatches.forEach(id => {
+      searchMatches.add(id);
+      getAncestors(id).forEach(aid => searchMatches.add(aid));
+    });
+
+    // 결과 표시는 직접 매칭만 카운트
+    if(resultEl) { resultEl.style.display='block'; resultEl.textContent=`${directMatches.size}개 결과`; }
     clearBtn.style.display='block';
   } else {
     if(resultEl) resultEl.style.display='none';
