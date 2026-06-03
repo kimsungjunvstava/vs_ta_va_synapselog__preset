@@ -360,8 +360,8 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
     <div id="left-panel" class="panel-box">
       <div class="panel-title">그래프 설정</div>
       <div class="ctrl-group">
-        <div class="ctrl-label-row"><span>노드 반발력 (Repulsion)</span><span class="val" id="v-rep">1500</span></div>
-        <input type="range" id="cfg-rep" min="100" max="2000" step="50" value="1500">
+        <div class="ctrl-label-row"><span>노드 반발력 (Repulsion)</span><span class="val" id="v-rep">500</span></div>
+        <input type="range" id="cfg-rep" min="100" max="2000" step="50" value="500">
       </div>
       <div class="ctrl-group">
         <div class="ctrl-label-row"><span>중력 (Gravity)</span><span class="val" id="v-grav">0.0001</span></div>
@@ -425,7 +425,7 @@ let searchKeyword = '';
 let searchMatches = new Set();
 let isStable = false;
 
-let CONFIG = { repulsion: 1500, gravity: 0.0001, linkDistance: 120 };
+let CONFIG = { repulsion: 500, gravity: 0.0001, linkDistance: 120 };
 
 function updateConfig() {
   CONFIG.repulsion = parseFloat(cfgRep.value);
@@ -1052,6 +1052,21 @@ function draw() {
       ctx.strokeStyle = `rgba(255,159,67,${isHov?0.6:0.25})`;
       ctx.lineWidth = 1/scale;
       ctx.setLineDash([6,6]);
+    } else if(hasSearch) {
+      const nodeColor = na.color || '#74b9ff';
+      if(bothMatch) {
+        ctx.strokeStyle = rgbStr(hexToRgb(nodeColor), 0.9);
+        ctx.lineWidth = 1.6/scale;
+        ctx.setLineDash([5,3]);
+      } else if(eitherMatch) {
+        ctx.strokeStyle = rgbStr(hexToRgb(nodeColor), 0.35);
+        ctx.lineWidth = 0.8/scale;
+        ctx.setLineDash([4,5]);
+      } else {
+        ctx.strokeStyle = rgbStr(hexToRgb(nodeColor), 0.05);
+        ctx.lineWidth = 0.5/scale;
+        ctx.setLineDash([3,7]);
+      }
     } else {
       const nodeColor = na.color || '#74b9ff';
       ctx.strokeStyle=rgbStr(hexToRgb(nodeColor), alpha);
@@ -1329,6 +1344,17 @@ document.getElementById('search-btn').addEventListener('click', () => {
   doSearch(kw);
 });
 clearBtn.addEventListener('click', () => { searchInput.value = ''; doSearch(''); });
+
+// 3. 노션 URL 붙여넣으면 32자리 ID 자동 추출
+document.getElementById('add-page-id').addEventListener('paste', function(e) {
+  setTimeout(() => {
+    const val = this.value.trim();
+    const match = val.match(/([0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12})/i);
+    if(match && (val.startsWith('http') || val.includes('notion'))) {
+      this.value = match[1].replace(/-/g, '');
+    }
+  }, 0);
+});
 
 // 마우스 이동 — 미니 툴팁 (이름만 표시)
 let mouseDownNode = null;
