@@ -61,6 +61,15 @@ export default async function handler(req, res) {
     return '(제목 없음)';
   }
 
+  // 헤딩 레벨을 한 단계 낮추는 함수 (데이터베이스 하위 페이지 내용용)
+  function demoteHeadings(md) {
+    return md
+      .replace(/^# /gm, '## ')
+      .replace(/^## /gm, '### ')
+      .replace(/^### /gm, '#### ')
+      .replace(/^#### /gm, '#### '); // 최대 ####
+  }
+
   // 재귀 블록 읽기 (데이터베이스 하위 페이지 포함)
   async function fetchBlocks(blockId, depth = 0) {
     if (depth > 4) return '';
@@ -125,7 +134,9 @@ export default async function handler(req, res) {
                 const batch = dbPages.slice(i, i + BATCH);
                 const results = await Promise.all(batch.map(async dbPage => {
                   const pageTitle = extractPageTitle(dbPage);
-                  const pageContent = await fetchBlocks(dbPage.id, depth + 2).catch(() => '');
+                  const rawContent = await fetchBlocks(dbPage.id, depth + 2).catch(() => '');
+                  // 내부 헤딩을 한 단계 낮춰서 페이지 제목(##)이 최상위가 되게
+                  const pageContent = demoteHeadings(rawContent);
                   return `\n## ${pageTitle}\n${pageContent}`;
                 }));
                 markdown += results.join('');
