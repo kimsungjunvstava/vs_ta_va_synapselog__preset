@@ -120,15 +120,17 @@ export default async function handler(req, res) {
             markdown += `\n# ${dbTitle}\n`;
             try {
               const dbPages = await fetchDatabaseChildren(block.id);
-              for (const dbPage of dbPages) {
-                const pageTitle = extractPageTitle(dbPage);
-                markdown += `\n## ${pageTitle}\n`;
-                const pageContent = await fetchBlocks(dbPage.id, depth + 2).catch(() => '');
-                if (pageContent.trim()) markdown += pageContent;
+              const BATCH = 5;
+              for (let i = 0; i < dbPages.length; i += BATCH) {
+                const batch = dbPages.slice(i, i + BATCH);
+                const results = await Promise.all(batch.map(async dbPage => {
+                  const pageTitle = extractPageTitle(dbPage);
+                  const pageContent = await fetchBlocks(dbPage.id, depth + 2).catch(() => '');
+                  return `\n## ${pageTitle}\n${pageContent}`;
+                }));
+                markdown += results.join('');
               }
-            } catch (e) {
-              // 데이터베이스 접근 실패 시 스킵
-            }
+            } catch (e) { }
             continue;
           }
         } catch (e) {
