@@ -592,25 +592,19 @@ function parseMarkdown(text, rootTitle) {
     // 볼드 텍스트(**텍스트**)는 노드로 만들지 않음 — 헤딩(#~####)만 노드로 처리
     // 볼드 강조 문구는 상위 노드의 desc에 자동 포함되어 상세 패널에서 주황색으로 표시됨
 
-    // ── [DB_PAGE] 데이터베이스 하위 페이지 제목 처리 ──
     if (line.startsWith('[DB_PAGE] ')) {
       const lbl = cleanLabel(line.replace('[DB_PAGE] ', '').trim());
       if (!lbl) continue;
 
-      // 현재 # 노드(level=1) 아래에 붙임
-      const parentId = currentParents[1] || rootId;
-      const parentNode = nodeMap[parentId];
-      const parentLevel = parentNode?.level ?? 0;
-      const dbLevel = parentLevel + 1;
-
-      const curId = addNode(lbl, 'sub', '', parentId, '', dbLevel);
+      // DB 하위 페이지는 루트(일기) 바로 아래에 붙임
+      // 프로젝트들(1) 같은 데이터베이스 컨테이너는 건너뜀
+      const curId = addNode(lbl, 'sub', '', rootId, '', 1);
 
       if (curId) {
-        currentParents[dbLevel] = curId;
-        for (let d = dbLevel + 1; d <= 4; d++) currentParents[d] = null;
-        // 이후 오는 # 헤딩이 DB_PAGE 아래에서 시작되도록 offset 설정
-        // # → dbLevel+1, ## → dbLevel+2 등으로 보정
-        depthOffset = dbLevel;
+        // level=1로 설정 — 이후 #은 level=2, ##은 level=3으로 붙음
+        currentParents[1] = curId;
+        for (let d = 2; d <= 4; d++) currentParents[d] = null;
+        depthOffset = 1; // # → level=2, ## → level=3
       }
       continue;
     }
