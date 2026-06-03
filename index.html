@@ -534,7 +534,7 @@ function parseMarkdown(text, rootTitle) {
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim();
-    if (!line || line.startsWith('---') || line.startsWith('![') || line.startsWith('<')) continue;
+    if (!line || line.startsWith('---') || line.startsWith('<')) continue;
 
     // ── 헤딩 파싱 (H1~H4)
     const headerMatch = line.match(/^(#{1,4})\s+(.*)$/);
