@@ -81,13 +81,10 @@ export default async function handler(req, res) {
 
           if (type === 'heading_1') {
             markdown += '# ' + extractHeadingText(block.heading_1?.rich_text) + '\n';
-            if (block.has_children && block.heading_1?.is_toggleable) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'heading_2') {
             markdown += '## ' + extractHeadingText(block.heading_2?.rich_text) + '\n';
-            if (block.has_children && block.heading_2?.is_toggleable) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'heading_3') {
             markdown += '### ' + extractHeadingText(block.heading_3?.rich_text) + '\n';
-            if (block.has_children && block.heading_3?.is_toggleable) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'heading_4') {
             markdown += '#### ' + extractHeadingText(block.heading_4?.rich_text) + '\n';
           } else if (type === 'paragraph') {
