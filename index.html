@@ -974,7 +974,7 @@ function mergeGraph(title, markdown, pageId) {
 
   // 4단계: 레벨별 순차 등장
   const LEVEL_DELAY = 2000;
-  const RADII = [0, 160, 110, 75, 50];
+  const RADII = [0, 300, 220, 150, 100];
   const newNodeIds = new Set(Object.values(idMap));
   const maxLevel = Math.max(...nodes.filter(n => newNodeIds.has(n.id)).map(n => n.level), 0);
 
@@ -1088,7 +1088,7 @@ function buildGraph() {
   isStable = false;
 
   const LEVEL_DELAY = 2000; // 레벨 간 딜레이 ms
-  const RADII = [0, 160, 110, 75, 50]; // 각 레벨별 배치 반경
+  const RADII = [0, 300, 220, 150, 100]; // 각 레벨별 배치 반경
 
   const maxLevel = Math.max(...nodes.map(n => n.level), 0);
 
