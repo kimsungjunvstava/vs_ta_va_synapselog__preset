@@ -541,31 +541,26 @@ function parseMarkdown(text, rootTitle) {
     if (level === 0) {
       color = '#ffffff';
     } else if (level === 1) {
-      // level=1: 새 hue 할당, lightness=65%
-      color = getH1Color(label);
+      color = getH1Color(label);  // lightness=65%
     } else if (level === 2) {
-      // level=2: 형제끼리 hue 분산 (부모 hue에서 offset), lightness=55%
       const parentColor = parentNode?.color;
       if (parentColor) {
         const parentHue = extractHue(parentColor);
-        // 같은 부모 아래 형제 수에 따라 hue 분산
         const siblingCount = edges.filter(e => e.from === parentId).length;
-        const hueOffset = (siblingCount * 47) % 120 - 60; // ±60도 범위
-        color = hslColor((parentHue + hueOffset + 360) % 360, 70, 55);
+        const hueOffset = (siblingCount * 47) % 120 - 60;
+        color = hslColor((parentHue + hueOffset + 360) % 360, 70, 58);
       } else {
         color = getH1Color(label);
-        color = hslColor(extractHue(color), 70, 55);
       }
     } else if (level === 3) {
       const parentColor = parentNode?.color;
       if (parentColor) {
-        color = hslColor(extractHue(parentColor), 65, 42);
+        color = hslColor(extractHue(parentColor), 65, 50);
       }
     } else if (level === 4) {
       const parentColor = parentNode?.color;
       if (parentColor) {
-        // ####: 채도 변경 없이 명도만 낮춤
-        color = hslColor(extractHue(parentColor), getSaturation(parentColor), 32);
+        color = hslColor(extractHue(parentColor), getSaturation(parentColor), 42);
       }
     }
 
