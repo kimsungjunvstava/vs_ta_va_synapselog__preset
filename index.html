@@ -937,8 +937,7 @@ function mergeGraph(title, markdown, pageId) {
 
   // 새 페이지 원형 배치 기준점 → 계산된 위치로 이동
   const newRoot = result.nodes.find(n => n.level === 0);
-  const offsetX = newRoot ? newRootX - newRoot.x : 0;
-  const offsetY = newRoot ? newRootY - newRoot.y : 0;
+  const newRootOldId = newRoot ? newRoot.id : null;
 
   result.nodes.forEach(n => {
     const oldId = n.id;
@@ -946,16 +945,17 @@ function mergeGraph(title, markdown, pageId) {
     idMap[oldId] = newId;
     n.id = newId;
     n.sourcePageId = trackId;
-    n.visible = false; // 처음엔 숨김
-    n.x = newRootX; n.y = newRootY; // 루트 위치에서 시작
+    n.visible = false;
+    n.x = newRootX; n.y = newRootY;
     n.vx = 0; n.vy = 0;
     nodes.push(n);
     nodeMap[newId] = n;
   });
 
   // 루트 노드만 먼저 표시
-  const newRootNode = nodes.find(n => n.id === (newRoot ? idMap[newRoot.id] : null));
-  if (newRootNode) { newRootNode.visible = true; newRootNode.x = newRootX; newRootNode.y = newRootY; }
+  const newRootNewId = newRootOldId ? idMap[newRootOldId] : null;
+  const newRootNode = newRootNewId ? nodeMap[newRootNewId] : null;
+  if (newRootNode) { newRootNode.visible = true; }
 
   // 2단계: 엣지 ID 매핑
   result.edges.forEach(e => {
@@ -967,10 +967,9 @@ function mergeGraph(title, markdown, pageId) {
   });
 
   // 3단계: 루트끼리 약한 연결
-  const newRootId = newRoot ? idMap[newRoot.id] : null;
   const firstRoot = nodes.find(n => n.level === 0 && !n.sourcePageId);
-  if (firstRoot && newRootId && firstRoot.id !== newRootId) {
-    edges.push({ from: firstRoot.id, to: newRootId, weakLink: true });
+  if (firstRoot && newRootNewId && firstRoot.id !== newRootNewId) {
+    edges.push({ from: firstRoot.id, to: newRootNewId, weakLink: true });
   }
 
   // 4단계: 레벨별 순차 등장
