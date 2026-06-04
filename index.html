@@ -758,6 +758,15 @@ function parseMarkdown(text, rootTitle) {
           const a3 = baseAngle + (l - (h3s.length - 1) / 2) * Math.max(0.35, 1.2 / Math.max(h3s.length, 1));
           k.x = m.x + Math.cos(a3) * h3Radius;
           k.y = m.y + Math.sin(a3) * h3Radius;
+
+          // H4 배치 — H3 기준 주변
+          const h4s = nodes.filter(p => edges.some(e => e.from === k.id && e.to === p.id));
+          const h4Radius = Math.max(60, h4s.length * 22);
+          h4s.forEach((p, q) => {
+            const a4 = a3 + (q - (h4s.length - 1) / 2) * Math.max(0.3, 1.0 / Math.max(h4s.length, 1));
+            p.x = k.x + Math.cos(a4) * h4Radius;
+            p.y = k.y + Math.sin(a4) * h4Radius;
+          });
         });
       });
     });
