@@ -49,7 +49,7 @@ canvas { display: block; }
   backdrop-filter: blur(10px);
 }
 .panel-title {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
   text-transform: uppercase; color: #ff9f43; margin-bottom: 10px;
 }
 
@@ -107,7 +107,7 @@ canvas { display: block; }
   border-radius: 6px; padding: 6px 10px;
 }
 #search-bar input {
-  border: none; outline: none; font-size: 11px; font-family: inherit;
+  border: none; outline: none; font-size: 13px; font-family: inherit;
   background: transparent; color: #fff; flex: 1; width: 0;
 }
 #search-bar input::placeholder { color: rgba(255,255,255,0.25); }
@@ -118,7 +118,7 @@ canvas { display: block; }
 
 /* 검색 기록 */
 #search-history { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
-.search-history-item {
+
   display: flex; align-items: center; justify-content: space-between;
   font-size: 10px; color: rgba(255,255,255,0.4);
   background: rgba(255,255,255,0.03); border-radius: 4px;
@@ -133,8 +133,8 @@ canvas { display: block; }
 #left-panel { }
 .ctrl-group { margin-bottom: 10px; }
 .ctrl-group:last-child { margin-bottom: 0; }
-.ctrl-label-row { display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
-.ctrl-label-row .val { color: #ff9f43; font-weight: 700; font-family: monospace; font-size: 10px; }
+.ctrl-label-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+.ctrl-label-row .val { color: #ff9f43; font-weight: 700; font-family: monospace; font-size: 13px; }
 input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.12); height: 3px; border-radius: 2px; outline: none; }
 input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: #ff9f43; cursor: pointer; box-shadow: 0 0 5px rgba(255,159,67,0.5); }
 
@@ -159,7 +159,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 #add-page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 #add-page-error { font-size: 10px; color: #ff6b6b; margin-top: 4px; display: none; }
 #added-pages-list { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
-.added-page-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.04); border-radius: 4px; padding: 4px 7px; }
+.added-page-item { display: flex; align-items: center; gap: 4px; font-size: 13px; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.04); border-radius: 4px; padding: 4px 7px; }
 .added-page-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
 .added-page-item .btn-group { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
 .btn-sync { background: none; border: none; cursor: pointer; font-size: 12px; color: rgba(255,255,255,0.4); padding: 1px 3px; line-height: 1; transition: color 0.2s; }
@@ -287,6 +287,22 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
   backdrop-filter: blur(12px);
 }
 #detail-panel.open { right: 12px; }
+
+/* 우측 패널 토글 버튼 */
+#detail-panel-sidebar-toggle {
+  position: fixed; top: 16px; z-index: 300;
+  right: -500px;
+  width: 28px; height: 28px; border-radius: 7px;
+  background: rgba(14,16,24,0.9); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7); cursor: pointer; font-size: 14px;
+  display: none; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, right 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+#detail-panel-sidebar-toggle.visible { display: flex; right: calc(380px + 24px); }
+#detail-panel-sidebar-toggle.collapsed { right: 12px; }
+#detail-panel-sidebar-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+#detail-panel.panel-collapsed { right: -380px !important; }
 
 #detail-card { display: none; }
 #detail-header { display: none; }
@@ -455,6 +471,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
   </div>
 </div>
 <div id="tab-overflow-menu"></div>
+<button id="detail-panel-sidebar-toggle" onclick="toggleDetailPanel()" title="패널 접기/펼치기">‹</button>
 
 <div id="status"></div>
 <div id="search-result-count"></div>
@@ -1346,6 +1363,20 @@ function toggleSidebar() {
   btn.style.left = collapsed ? '12px' : '394px';
 }
 
+let _detailPanelCollapsed = false;
+function toggleDetailPanel() {
+  _detailPanelCollapsed = !_detailPanelCollapsed;
+  const panel = document.getElementById('detail-panel');
+  const btn = document.getElementById('detail-panel-sidebar-toggle');
+  if (_detailPanelCollapsed) {
+    panel.classList.add('panel-collapsed');
+    if (btn) { btn.textContent = '›'; btn.classList.add('collapsed'); }
+  } else {
+    panel.classList.remove('panel-collapsed');
+    if (btn) { btn.textContent = '‹'; btn.classList.remove('collapsed'); }
+  }
+}
+
 let _tabsCollapsed = false;
 function toggleDetailTabs() {
   _tabsCollapsed = !_tabsCollapsed;
@@ -1365,20 +1396,11 @@ function renderTabs() {
   if (!tabsEl) return;
   tabsEl.innerHTML = '';
 
-  const containerWidth = tabsEl.parentElement.clientWidth - 120;
-  let usedWidth = 0;
-  const TAB_WIDTH = 160;
-  const visibleTabs = [];
-  const hiddenTabs = [];
-
-  _tabs.forEach(tab => {
-    if (usedWidth + TAB_WIDTH <= containerWidth) {
-      visibleTabs.push(tab);
-      usedWidth += TAB_WIDTH;
-    } else {
-      hiddenTabs.push(tab);
-    }
-  });
+  // 최신순 — 뒤에서부터 앞으로 (최신이 왼쪽)
+  const reversed = [..._tabs].reverse();
+  const MAX_VISIBLE = 3;
+  const visibleTabs = reversed.slice(0, MAX_VISIBLE);
+  const hiddenTabs = reversed.slice(MAX_VISIBLE);
 
   visibleTabs.forEach(tab => {
     const el = document.createElement('div');
@@ -1470,16 +1492,23 @@ function openPanel(n) {
     renderPanelContent(n);
     renderTabs();
   }
+  _detailPanelCollapsed = false;
   detailPanel.classList.add('open');
+  detailPanel.classList.remove('panel-collapsed');
   statusEl.classList.add('panel-open');
+  const toggleBtn = document.getElementById('detail-panel-sidebar-toggle');
+  if (toggleBtn) { toggleBtn.classList.add('visible'); toggleBtn.classList.remove('collapsed'); toggleBtn.textContent = '‹'; }
 }
 
 function closePanel() {
   _tabs = [];
   _activeTabId = null;
   detailPanel.classList.remove('open');
+  detailPanel.classList.remove('panel-collapsed');
   statusEl.classList.remove('panel-open');
   renderTabs();
+  const toggleBtn = document.getElementById('detail-panel-sidebar-toggle');
+  if (toggleBtn) { toggleBtn.classList.remove('visible', 'collapsed'); }
 }
 
 // ── 검색 기록 ──
