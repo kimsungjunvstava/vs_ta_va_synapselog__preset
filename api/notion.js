@@ -106,7 +106,12 @@ export default async function handler(req, res) {
           } else if (type === 'toggle') {
             listCounter = 0;
             const title = extractHeadingText(block.toggle?.rich_text);
-            if (title.trim()) markdown += '#### ' + title + '\n';
+            if (title.trim()) markdown += '## ' + title + '\n';
+            // toggle 안의 내용도 재귀로 읽기
+            if (block.has_children) {
+              markdown += await fetchBlocks(block.id, depth + 1);
+            }
+            continue;
           } else if (type === 'child_page') {
             // 하위 페이지 — 재귀적으로 읽기
             const childTitle = block.child_page?.title || '하위 페이지';
