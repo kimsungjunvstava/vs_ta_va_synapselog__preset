@@ -125,16 +125,17 @@ canvas { display: block; }
 #search-result-count { font-size: 10px; color: rgba(255,159,67,0.7); margin-top: 5px; display: none; }
 
 /* 검색 기록 */
-#search-history { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
-
+#search-history { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+.search-history-item {
   display: flex; align-items: center; justify-content: space-between;
-  font-size: 10px; color: rgba(255,255,255,0.4);
-  background: rgba(255,255,255,0.03); border-radius: 4px;
-  padding: 3px 7px; cursor: pointer; transition: background 0.15s;
+  font-size: 12px; color: rgba(255,255,255,0.75);
+  background: rgba(255,255,255,0.05); border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 6px 10px; cursor: pointer; transition: background 0.15s;
 }
-.search-history-item:hover { background: rgba(255,255,255,0.07); color: #ddd; }
+.search-history-item:hover { background: rgba(255,255,255,0.09); color: #fff; }
 .search-history-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.search-history-del { background: none; border: none; color: rgba(255,255,255,0.2); cursor: pointer; font-size: 10px; flex-shrink: 0; padding: 0 2px; }
+.search-history-del { background: none; border: none; color: rgba(255,255,255,0.35); cursor: pointer; font-size: 11px; flex-shrink: 0; padding: 0 2px; }
 .search-history-del:hover { color: #ff6b6b; }
 
 /* ── 슬라이더 패널 ── */
