@@ -439,9 +439,9 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
         <div class="ctrl-label-row"><span>중력 (Gravity)</span><span class="val" id="v-grav">0.0001</span></div>
         <input type="range" id="cfg-grav" min="0.0001" max="0.0030" step="0.0001" value="0.0001">
       </div>
-      <div class="ctrl-group">
-        <div class="ctrl-label-row"><span>링크 장력 (Link Distance)</span><span class="val" id="v-dist">120</span></div>
-        <input type="range" id="cfg-dist" min="60" max="250" step="5" value="120">
+      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;">
+        <span>노드 제목 표시</span>
+        <button id="label-toggle-btn" onclick="toggleLabels()" style="background:rgba(255,159,67,0.15); border:1px solid rgba(255,159,67,0.4); color:#ff9f43; border-radius:6px; padding:4px 12px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer;">ON</button>
       </div>
     </div>
   </div>
@@ -503,15 +503,13 @@ let searchKeyword = '';
 let searchMatches = new Set();
 let isStable = false;
 
-let CONFIG = { repulsion: 500, gravity: 0.0001, linkDistance: 120 };
+let CONFIG = { repulsion: 500, gravity: 0.0001, linkDistance: 60 };
 
 function updateConfig() {
   CONFIG.repulsion = parseFloat(cfgRep.value);
   CONFIG.gravity = parseFloat(cfgGrav.value);
-  CONFIG.linkDistance = parseFloat(cfgDist.value);
   vRep.textContent = cfgRep.value;
   vGrav.textContent = cfgGrav.value;
-  vDist.textContent = cfgDist.value;
   isStable = false;
 }
 cfgRep.addEventListener('input', updateConfig);
@@ -1347,15 +1345,16 @@ function draw() {
     ctx.fill(); ctx.stroke();
 
     let lbl = n.label;
-    if(n.level>=2 && lbl.length>14) lbl = lbl.substring(0,13)+'…';
-    let fontSize = 10;
-    if(n.level===0||n.level===1) fontSize=12;
-    else if(n.level===2) fontSize=11;
-
-    ctx.font=(n.level<=1)?`bold ${fontSize}px 'Noto Sans KR',sans-serif`:`500 ${fontSize}px 'Noto Sans KR',sans-serif`;
-    ctx.fillStyle=isMatch?'#ffffff':`rgba(215,220,230,${isDim?0.12:0.85})`;
-    ctx.textAlign='center'; ctx.textBaseline='top';
-    ctx.fillText(lbl, n.x, n.y+r+5);
+    if (_showLabels) {
+      if(n.level>=2 && lbl.length>14) lbl = lbl.substring(0,13)+'…';
+      let fontSize = 10;
+      if(n.level===0||n.level===1) fontSize=12;
+      else if(n.level===2) fontSize=11;
+      ctx.font=(n.level<=1)?`bold ${fontSize}px 'Noto Sans KR',sans-serif`:`500 ${fontSize}px 'Noto Sans KR',sans-serif`;
+      ctx.fillStyle=isMatch?'#ffffff':`rgba(215,220,230,${isDim?0.12:0.85})`;
+      ctx.textAlign='center'; ctx.textBaseline='top';
+      ctx.fillText(lbl, n.x, n.y+r+5);
+    }
   });
 
   ctx.restore();
@@ -1376,6 +1375,13 @@ const detailCatInline = document.getElementById('detail-cat-inline');
 const CAT_LABELS = { root:'루트', exp:'회상·경험', value:'가치관·철학', sub:'세부 항목' };
 
 // ── 사이드바 토글 ──
+let _showLabels = true;
+function toggleLabels() {
+  _showLabels = !_showLabels;
+  const btn = document.getElementById('label-toggle-btn');
+  if (btn) btn.textContent = _showLabels ? 'ON' : 'OFF';
+}
+
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const btn = document.getElementById('sidebar-toggle');
