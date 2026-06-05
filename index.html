@@ -825,8 +825,21 @@ let drag=null, hoveredNode=null;
 let isPanning=false, panStartX=0, panStartY=0, panStartOffsetX=0, panStartOffsetY=0;
 
 // ── 전역 변수 ──
-let _savedToken = '';
+let _savedToken = sessionStorage.getItem('snlog_token') || '';
 let _addedPageIds = new Set();
+
+// F5 후 토큰 복원
+if (_savedToken) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('input-token');
+    if (input) input.value = _savedToken;
+    // 토큰 있으면 바로 그래프 화면으로
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) loginScreen.style.display = 'none';
+    buildGraph();
+    loop();
+  });
+}
 
 // ── 토큰만 입력 → 그래프 화면 진입 ──
 async function startGraph() {
@@ -844,6 +857,7 @@ async function startGraph() {
   }
 
   _savedToken = token;
+  try { sessionStorage.setItem('snlog_token', token); } catch(e) {}
   document.getElementById('login-screen').style.display = 'none';
   buildGraph();
   loop();
