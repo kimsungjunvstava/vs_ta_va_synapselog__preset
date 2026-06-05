@@ -838,6 +838,7 @@ if (_savedToken) {
     if (loginScreen) loginScreen.style.display = 'none';
     buildGraph();
     loop();
+    setTimeout(restorePageList, 500); // 그래프 초기화 후 페이지 목록 복원
   });
 }
 
@@ -861,6 +862,40 @@ async function startGraph() {
   document.getElementById('login-screen').style.display = 'none';
   buildGraph();
   loop();
+}
+
+// ── 페이지 목록 저장/복원 ──
+function savePageList() {
+  const list = [];
+  _addedPageIds.forEach(pageId => {
+    const cached = sessionStorage.getItem(`snlog_${pageId}`);
+    const title = cached ? (JSON.parse(cached).title || pageId) : pageId;
+    list.push({ pageId, title });
+  });
+  try { sessionStorage.setItem('snlog_pages', JSON.stringify(list)); } catch(e) {}
+}
+
+async function restorePageList() {
+  const saved = sessionStorage.getItem('snlog_pages');
+  if (!saved) return;
+  let list;
+  try { list = JSON.parse(saved); } catch(e) { return; }
+  for (const { pageId, title } of list) {
+    if (_addedPageIds.has(pageId)) continue;
+    const cached = sessionStorage.getItem(`snlog_${pageId}`);
+    if (!cached) continue;
+    let data;
+    try { data = JSON.parse(cached); } catch(e) { continue; }
+    _addedPageIds.add(pageId);
+    mergeGraph(data.title || title, data.markdown || '', pageId);
+    const listEl = document.getElementById('added-pages-list');
+    const item = document.createElement('div');
+    item.className = 'added-page-item';
+    item.dataset.pageId = pageId;
+    item.innerHTML = `<span>📄 ${data.title || title} <span style="color:rgba(255,159,67,0.5);font-size:9px;">캐시</span></span><div class="btn-group"><button class="btn-sync" title="동기화" onclick="syncPage('${pageId}')">↻</button><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
+    listEl.appendChild(item);
+  }
+  updateBulkActionsVisibility();
 }
 
 // ── 페이지 추가 ──
@@ -916,6 +951,7 @@ async function addPage() {
     item.innerHTML = `<span>📄 ${data.title || pageId}${isCached ? ' <span style="color:rgba(255,159,67,0.5);font-size:9px;">캐시</span>' : ''}</span><div class="btn-group"><button class="btn-sync" title="동기화" onclick="syncPage('${pageId}')">↻</button><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
     list.appendChild(item);
     updateBulkActionsVisibility();
+    savePageList();
 
     document.getElementById('add-page-id').value = '';
     btn.disabled = false;
@@ -1018,6 +1054,7 @@ function removePage(pageId, el) {
   Object.keys(nodeMap).forEach(k => { if (removeIds.has(k)) delete nodeMap[k]; });
   isStable = false;
   updateBulkActionsVisibility();
+  savePageList();
 }
 
 // 기존 그래프에 새 페이지 노드 병합
