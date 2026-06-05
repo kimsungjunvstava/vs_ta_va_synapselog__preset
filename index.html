@@ -350,7 +350,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
   position: relative;
 }
 .toggle-thumb {
-  position: absolute; left: 1px;
+  position: absolute; left: 0px;
   width: 24px; height: 24px; border-radius: 50%;
   background: rgba(255,159,67,0.5);
   border: 1.5px solid rgba(255,159,67,0.7);
@@ -361,7 +361,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
   border-color: #ff9f43;
 }
 .toggle-switch input:checked + .toggle-track .toggle-thumb {
-  left: 17px;
+  left: 20px;
   background: #ff9f43;
   border-color: #ff9f43;
 }
@@ -492,7 +492,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
   <div id="detail-tabs-bar">
     <div id="detail-tabs"></div>
     <button id="tab-overflow-btn" onclick="toggleOverflowMenu(event)">···</button>
-    <button id="detail-panel-close" onclick="closePanel()" title="전체 닫기">✕</button>
+    <button id="detail-panel-close" onclick="closePanel()" title="전체 닫기" style="color:#ff9f43;">✕</button>
   </div>
   <div id="detail-body">
     <div id="detail-title-row">
@@ -1292,28 +1292,29 @@ function draw() {
       return path;
     }
 
-    // 매칭 노드들의 경로를 따라 흰색 점선만 그리기
+    // 매칭 노드들의 경로를 따라 컬러 점선 그리기
     const drawnPairs = new Set();
     ctx.setLineDash([4, 6]);
     ctx.lineWidth = 1.2 / scale;
-    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
 
     matchArr.forEach(n => {
-      // 직접 매칭 노드에서 루트까지 경로 선 그리기
       const path = getPath(n);
       for(let i = 0; i < path.length - 1; i++) {
         const a = path[i], b = path[i+1];
         if(!a.visible || !b.visible) continue;
-        // 2. #(level=1)끼리 연결하는 선은 제외 — 둘 다 level=1이면 스킵
         if(a.level === 1 && b.level === 1) continue;
         const key = [a.id, b.id].sort().join('|');
         if(drawnPairs.has(key)) continue;
         drawnPairs.add(key);
+        // 노드 컬러 기반 점선
+        const nodeColor = b.color || a.color || '#ff9f43';
+        const rgb = hexToRgb(nodeColor);
+        ctx.strokeStyle = rgbStr(rgb, 0.75);
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       }
     });
 
-    // 4. 페이지간 연결 — 매칭 노드가 있는 페이지의 루트(level=0)끼리 연결
+    // 페이지간 연결 — 루트 컬러 기반 점선
     const matchedRoots = new Set();
     matchArr.forEach(n => {
       const path = getPath(n);
@@ -1322,12 +1323,13 @@ function draw() {
     });
     const rootArr = [...matchedRoots];
     if(rootArr.length > 1) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
       ctx.lineWidth = 1.5 / scale;
       ctx.setLineDash([6, 5]);
       for(let i = 0; i < rootArr.length - 1; i++) {
         const a = rootArr[i], b = rootArr[i+1];
         if(!a.visible || !b.visible) continue;
+        const rgb = hexToRgb(a.color || '#ff9f43');
+        ctx.strokeStyle = rgbStr(rgb, 0.9);
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       }
     }
