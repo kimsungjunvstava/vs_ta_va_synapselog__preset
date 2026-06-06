@@ -522,6 +522,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
       </div>
+      <button onclick="exportGraph()" style="width:100%; margin-top:8px; background:rgba(255,159,67,0.12); border:1px solid rgba(255,159,67,0.4); color:#ff9f43; border-radius:7px; padding:8px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,159,67,0.22)'" onmouseout="this.style.background='rgba(255,159,67,0.12)'">↓ 그래프 이미지 저장</button>
     </div>
   </div>
 </div>
@@ -844,6 +845,32 @@ async function startGraph() {
   document.getElementById('login-screen').style.display = 'none';
   buildGraph();
   loop();
+}
+
+// ── 그래프 이미지 Export ──
+function exportGraph() {
+  const canvas = document.getElementById('c');
+  if (!canvas) return;
+
+  // 오프스크린 캔버스에 배경 포함해서 그리기
+  const offscreen = document.createElement('canvas');
+  offscreen.width = canvas.width;
+  offscreen.height = canvas.height;
+  const ctx2 = offscreen.getContext('2d');
+
+  // 배경 채우기
+  ctx2.fillStyle = '#0a0c14';
+  ctx2.fillRect(0, 0, offscreen.width, offscreen.height);
+
+  // 기존 캔버스 내용 복사
+  ctx2.drawImage(canvas, 0, 0);
+
+  // PNG 다운로드
+  const link = document.createElement('a');
+  const timestamp = new Date().toISOString().slice(0, 10);
+  link.download = `SynapseLog_${timestamp}.png`;
+  link.href = offscreen.toDataURL('image/png');
+  link.click();
 }
 
 // ── 마크다운 파일 직접 임포트 ──
