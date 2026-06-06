@@ -522,6 +522,13 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
           <span class="toggle-track"><span class="toggle-thumb"></span></span>
         </label>
       </div>
+      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;">
+        <span style="font-size:13px; color:rgba(255,255,255,0.75);">연결 모드 (Connect Mode)</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="connect-toggle-input" onchange="toggleConnectMode()">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
       <button onclick="exportGraph()" style="width:100%; margin-top:8px; background:rgba(255,159,67,0.12); border:1px solid rgba(255,159,67,0.4); color:#ff9f43; border-radius:7px; padding:8px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,159,67,0.22)'" onmouseout="this.style.background='rgba(255,159,67,0.12)'">↓ 그래프 이미지 저장</button>
     </div>
   </div>
@@ -821,7 +828,8 @@ if (_savedToken) {
     if (loginScreen) loginScreen.style.display = 'none';
     buildGraph();
     loop();
-    setTimeout(restorePageList, 500); // 그래프 초기화 후 페이지 목록 복원
+    setTimeout(restorePageList, 500);
+    setTimeout(loadManualLinks, 800);
   });
 }
 
@@ -1428,6 +1436,9 @@ function simulate() {
       if(e.weakLink) {
         natural = 600;
         strength = 0.001;
+      } else if(e.manualLink) {
+        // 수동 연결 — 장력 없음 (시각적 연결만)
+        return;
       } else {
         if(n.level===1||other.level===1) natural *= 1.2;
         if(n.level>=3||other.level>=3) natural *= 0.9;
@@ -1476,7 +1487,12 @@ function draw() {
     if(hasSearch){ alpha=bothMatch?0.85:eitherMatch?0.25:0.02; width=bothMatch?2.0:0.6; }
     else { alpha=isHov?0.85:0.55; width=isHov?2.2:0.8; }
 
-    if(e.weakLink) {
+    if(e.manualLink) {
+      // 수동 연결 — 주황색 점선
+      ctx.strokeStyle = `rgba(255,159,67,${isHov ? 0.9 : 0.6})`;
+      ctx.lineWidth = (isHov ? 2.0 : 1.5) / scale;
+      ctx.setLineDash([6, 5]);
+    } else if(e.weakLink) {
       ctx.strokeStyle = `rgba(255,159,67,${isHov?0.6:0.25})`;
       ctx.lineWidth = 1/scale;
       ctx.setLineDash([6,6]);
@@ -1624,6 +1640,16 @@ function draw() {
     ctx.lineWidth=isHov?2/scale:1/scale;
     ctx.fill(); ctx.stroke();
 
+    // 연결 모드 선택 노드 — 주황색 링
+    if (_connectMode && n.connectSelected) {
+      ctx.beginPath(); ctx.arc(n.x, n.y, r + 5/scale, 0, Math.PI*2);
+      ctx.strokeStyle = '#ff9f43';
+      ctx.lineWidth = 2/scale;
+      ctx.setLineDash([4, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
     let lbl = n.label;
     if (_showLabels) {
       if(n.level>=2 && lbl.length>14) lbl = lbl.substring(0,13)+'…';
@@ -1687,6 +1713,77 @@ function toggleFocusMode() {
   } else if (_focusNodeId) {
     applyFocusMode(_focusNodeId);
   }
+  isStable = false;
+}
+
+// ── 연결 모드 ──
+let _connectMode = false;
+let _connectFirstNode = null;
+
+function toggleConnectMode() {
+  const cb = document.getElementById('connect-toggle-input');
+  _connectMode = cb ? cb.checked : !_connectMode;
+  _connectFirstNode = null;
+  // 상태바 안내
+  const statusEl2 = document.getElementById('status');
+  if (_connectMode && statusEl2) statusEl2.textContent = '연결 모드: 첫 번째 노드를 클릭하세요';
+  else if (statusEl2) statusEl2.textContent = '';
+  isStable = false;
+}
+
+function handleConnectClick(n) {
+  const statusEl2 = document.getElementById('status');
+  if (!_connectFirstNode) {
+    // 첫 번째 노드 선택
+    _connectFirstNode = n;
+    n.connectSelected = true;
+    if (statusEl2) statusEl2.textContent = `"${n.label}" 선택됨 — 연결할 노드를 클릭하세요`;
+  } else if (_connectFirstNode.id === n.id) {
+    // 같은 노드 클릭 → 선택 취소
+    _connectFirstNode.connectSelected = false;
+    _connectFirstNode = null;
+    if (statusEl2) statusEl2.textContent = '연결 모드: 첫 번째 노드를 클릭하세요';
+  } else {
+    // 두 번째 노드 → 연결 생성
+    const a = _connectFirstNode, b = n;
+    // 중복 체크
+    const exists = edges.some(e =>
+      (e.from === a.id && e.to === b.id) || (e.from === b.id && e.to === a.id)
+    );
+    if (!exists) {
+      edges.push({ from: a.id, to: b.id, manualLink: true });
+      saveManualLinks();
+    }
+    a.connectSelected = false;
+    _connectFirstNode = null;
+    if (statusEl2) statusEl2.textContent = `"${a.label}" ↔ "${b.label}" 연결됨`;
+    setTimeout(() => { if (statusEl2) statusEl2.textContent = '연결 모드: 첫 번째 노드를 클릭하세요'; }, 2000);
+  }
+  isStable = false;
+}
+
+function saveManualLinks() {
+  const manual = edges.filter(e => e.manualLink).map(e => ({ from: e.from, to: e.to }));
+  try { sessionStorage.setItem('snlog_manual_links', JSON.stringify(manual)); } catch(e) {}
+}
+
+function loadManualLinks() {
+  const saved = sessionStorage.getItem('snlog_manual_links');
+  if (!saved) return;
+  let links;
+  try { links = JSON.parse(saved); } catch(e) { return; }
+  links.forEach(({ from, to }) => {
+    if (nodeMap[from] && nodeMap[to]) {
+      const exists = edges.some(e => (e.from === from && e.to === to) || (e.from === to && e.to === from));
+      if (!exists) edges.push({ from, to, manualLink: true });
+    }
+  });
+}
+
+// 우클릭으로 수동 연결 삭제
+function removeManualLink(fromId, toId) {
+  edges = edges.filter(e => !(e.manualLink && ((e.from === fromId && e.to === toId) || (e.from === toId && e.to === fromId))));
+  saveManualLinks();
   isStable = false;
 }
 
@@ -2004,14 +2101,42 @@ canvas.addEventListener('mousedown', e => {
 canvas.addEventListener('mouseup', e => {
   const elapsed = Date.now() - mouseDownTime;
   const n = getNodeAt(e.clientX, e.clientY);
-  // 클릭(드래그 아님)으로 판단 — 150ms 이내 + 같은 노드
   if(elapsed < 150 && n && n === mouseDownNode && n.level > 0) {
-    openPanel(n);
+    if (_connectMode) {
+      handleConnectClick(n);
+    } else {
+      openPanel(n);
+    }
   }
   drag=null; isPanning=false; canvas.style.cursor='default';
 });
 
 canvas.addEventListener('mouseleave', ()=>{ tooltip.style.display='none'; hoveredNode=null; drag=null; isPanning=false; });
+
+// 우클릭 — 수동 연결 엣지 삭제
+canvas.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  const w = screenToWorld(e.clientX, e.clientY);
+  // 수동 엣지 중 가장 가까운 엣지 찾기
+  let closest = null, minDist = 12 / scale;
+  edges.filter(e2 => e2.manualLink).forEach(e2 => {
+    const na = nodeMap[e2.from], nb = nodeMap[e2.to];
+    if (!na?.visible || !nb?.visible) return;
+    // 점-선 거리 계산
+    const dx = nb.x - na.x, dy = nb.y - na.y;
+    const len = Math.sqrt(dx*dx + dy*dy);
+    if (len === 0) return;
+    const t = Math.max(0, Math.min(1, ((w.x-na.x)*dx + (w.y-na.y)*dy) / (len*len)));
+    const px = na.x + t*dx - w.x, py = na.y + t*dy - w.y;
+    const d = Math.sqrt(px*px + py*py);
+    if (d < minDist) { minDist = d; closest = e2; }
+  });
+  if (closest) {
+    if (confirm(`"${nodeMap[closest.from]?.label}" ↔ "${nodeMap[closest.to]?.label}" 연결을 삭제할까요?`)) {
+      removeManualLink(closest.from, closest.to);
+    }
+  }
+});
 
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
