@@ -63,7 +63,7 @@ export default async function handler(req, res) {
 
   // 재귀 블록 읽기 (데이터베이스 하위 페이지 포함)
   async function fetchBlocks(blockId, depth = 0) {
-    if (depth > 4) return '';
+    if (depth > 8) return '';
     let markdown = '';
     let cursor = undefined;
     let listCounter = 0; // 번호 목록 카운터
