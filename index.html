@@ -347,45 +347,42 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 #detail-content strong { color: #ff9f43; font-weight: 700; }
 
 /* ── 동심원 ON/OFF 토글 ── */
-.toggle-switch { position: relative; display: inline-block; cursor: pointer; width: 36px; height: 36px; }
+.toggle-switch { position: relative; display: inline-block; cursor: pointer; width: 40px; height: 40px; flex-shrink: 0; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
 .toggle-track {
-  width: 36px; height: 36px; border-radius: 50%;
-  border: 2px solid rgba(255,159,67,0.35);
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 3px solid rgba(255,159,67,0.25);
   background: transparent;
   position: relative;
-  transition: border-color 0.25s;
-  box-shadow: 0 0 0 4px rgba(255,159,67,0.08);
+  transition: border-color 0.2s;
 }
-/* 두 번째 동심원 링 */
+/* 안쪽 두 번째 링 */
 .toggle-track::before {
   content: '';
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 1.5px solid rgba(255,159,67,0.2);
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 3px solid rgba(255,159,67,0.2);
   background: transparent;
-  transition: border-color 0.25s;
+  transition: border-color 0.2s;
 }
-/* 중앙 원 (thumb) */
+/* 중앙 채워진 원 */
 .toggle-thumb {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 16px; height: 16px; border-radius: 50%;
-  background: rgba(255,159,67,0.3);
-  transition: background 0.25s, box-shadow 0.25s;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(255,159,67,0.2);
+  transition: background 0.2s;
 }
 /* ON 상태 */
 .toggle-switch input:checked + .toggle-track {
   border-color: #ff9f43;
-  box-shadow: 0 0 0 4px rgba(255,159,67,0.12);
 }
 .toggle-switch input:checked + .toggle-track::before {
-  border-color: rgba(255,159,67,0.6);
+  border-color: #ff9f43;
 }
 .toggle-switch input:checked + .toggle-track .toggle-thumb {
   background: #ff9f43;
-  box-shadow: 0 0 8px rgba(255,159,67,0.5);
 }
 
 /* SVG 버튼 픽셀 선명하게 */
