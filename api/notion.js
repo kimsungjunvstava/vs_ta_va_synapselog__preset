@@ -151,11 +151,6 @@ export default async function handler(req, res) {
         } catch (e) {
           // 블록 파싱 실패 시 스킵
         }
-
-        // 일반 하위 블록 재귀
-        if (block.has_children && block.type !== 'child_page' && block.type !== 'child_database') {
-          markdown += await fetchBlocks(block.id, depth + 1);
-        }
       }
 
       cursor = data.has_more ? data.next_cursor : undefined;
