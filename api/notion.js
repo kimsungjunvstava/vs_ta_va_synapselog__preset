@@ -81,32 +81,42 @@ export default async function handler(req, res) {
 
           if (type === 'heading_1') {
             markdown += '# ' + extractHeadingText(block.heading_1?.rich_text) + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'heading_2') {
             markdown += '## ' + extractHeadingText(block.heading_2?.rich_text) + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'heading_3') {
             markdown += '### ' + extractHeadingText(block.heading_3?.rich_text) + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'heading_4') {
             markdown += '#### ' + extractHeadingText(block.heading_4?.rich_text) + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'paragraph') {
             const text = extractRichText(block.paragraph?.rich_text);
             if (text.trim()) markdown += text + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'bulleted_list_item') {
             listCounter = 0;
             markdown += '- ' + extractRichText(block.bulleted_list_item?.rich_text) + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'numbered_list_item') {
             listCounter++;
             markdown += `${listCounter}. ` + extractRichText(block.numbered_list_item?.rich_text) + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'quote') {
             listCounter = 0;
             markdown += '> ' + extractRichText(block.quote?.rich_text) + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'callout') {
             listCounter = 0;
             const text = extractRichText(block.callout?.rich_text);
             if (text.trim()) markdown += '> ' + text + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
           } else if (type === 'toggle') {
             listCounter = 0;
             const title = extractHeadingText(block.toggle?.rich_text);
             if (title.trim()) markdown += '## ' + title + '\n';
+            if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1);
             continue;
           } else if (type === 'child_page') {
             // 하위 페이지 — 재귀적으로 읽기
