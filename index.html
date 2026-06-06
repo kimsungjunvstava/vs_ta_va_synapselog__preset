@@ -346,33 +346,46 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 #detail-content { font-size: 13px; color: #ccc; line-height: 2.0; white-space: pre-wrap; word-break: keep-all; }
 #detail-content strong { color: #ff9f43; font-weight: 700; }
 
-/* ── 토글 스위치 ── */
-.toggle-switch { position: relative; display: inline-block; cursor: pointer; }
+/* ── 동심원 ON/OFF 토글 ── */
+.toggle-switch { position: relative; display: inline-block; cursor: pointer; width: 36px; height: 36px; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
 .toggle-track {
-  display: flex; align-items: center;
-  width: 44px; height: 26px; border-radius: 13px;
-  border: 1.5px solid rgba(255,159,67,0.5);
-  background: rgba(255,255,255,0.05);
-  transition: background 0.25s, border-color 0.25s;
-  position: relative; overflow: hidden;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid rgba(255,159,67,0.35);
+  background: transparent;
+  position: relative;
+  transition: border-color 0.25s;
+  box-shadow: 0 0 0 4px rgba(255,159,67,0.08);
 }
+/* 두 번째 동심원 링 */
+.toggle-track::before {
+  content: '';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1.5px solid rgba(255,159,67,0.2);
+  background: transparent;
+  transition: border-color 0.25s;
+}
+/* 중앙 원 (thumb) */
 .toggle-thumb {
-  position: absolute; left: 0px;
-  width: 24px; height: 24px; border-radius: 50%;
-  background: rgba(255,159,67,0.5);
-  border: 1.5px solid rgba(255,159,67,0.7);
-  transition: left 0.25s cubic-bezier(0.4,0,0.2,1), background 0.25s;
-  top: 50%; transform: translateY(-50%);
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px; height: 16px; border-radius: 50%;
+  background: rgba(255,159,67,0.3);
+  transition: background 0.25s, box-shadow 0.25s;
 }
+/* ON 상태 */
 .toggle-switch input:checked + .toggle-track {
-  background: rgba(255,159,67,0.12);
   border-color: #ff9f43;
+  box-shadow: 0 0 0 4px rgba(255,159,67,0.12);
+}
+.toggle-switch input:checked + .toggle-track::before {
+  border-color: rgba(255,159,67,0.6);
 }
 .toggle-switch input:checked + .toggle-track .toggle-thumb {
-  left: 20px;
   background: #ff9f43;
-  border-color: #ff9f43;
+  box-shadow: 0 0 8px rgba(255,159,67,0.5);
 }
 
 /* SVG 버튼 픽셀 선명하게 */
