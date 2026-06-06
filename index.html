@@ -344,7 +344,6 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 
 #detail-divider { height: 1px; background: rgba(255,255,255,0.07); margin-bottom: 18px; }
 #detail-content { font-size: 13px; color: #ccc; line-height: 2.0; white-space: pre-wrap; word-break: keep-all; overflow-y: auto; max-height: calc(100vh - 200px); }
-#detail-body { flex: 1; overflow-y: auto; padding-bottom: 20px; }
 #detail-content strong { color: #ff9f43; font-weight: 700; }
 
 /* ── 토글 스위치 ── */
@@ -463,21 +462,19 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
     <div id="add-page-panel" class="panel-box">
       <div class="panel-title">페이지 추가</div>
       <div style="position:relative; display:flex; align-items:center;">
-        <input type="text" id="add-page-id" placeholder="노션 페이지 링크 붙여넣기" style="padding-right:32px; flex:1;" />
-        <span style="position:absolute; right:9px; color:#ff9f43; font-size:13px; pointer-events:none;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        </span>
+        <input type="text" id="add-page-id" placeholder="노션 링크 붙여넣기 혹은 .MD파일 불러오기" style="padding-right:52px; flex:1;" />
+        <div style="position:absolute; right:8px; display:flex; align-items:center; gap:7px;">
+          <span style="color:rgba(255,255,255,0.25); display:flex; pointer-events:none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </span>
+          <label for="md-import-file" title=".md 파일 임포트" style="cursor:pointer; color:#ff9f43; display:flex; align-items:center; margin:0;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </label>
+          <input type="file" id="md-import-file" accept=".md,.txt" style="display:none;" onchange="importMarkdownFile(event)">
+        </div>
       </div>
       <button id="add-page-btn" onclick="addPage()">+ 노드 불러오기</button>
       <div id="add-page-error"></div>
-      <!-- 마크다운 직접 임포트 -->
-      <div style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;">
-        <label for="md-import-file" style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; color:rgba(255,255,255,0.5); padding:6px 8px; border-radius:6px; border:1px dashed rgba(255,255,255,0.15); transition:all 0.2s;">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          .md 파일 임포트
-        </label>
-        <input type="file" id="md-import-file" accept=".md,.txt" style="display:none;" onchange="importMarkdownFile(event)">
-      </div>
       <div id="added-pages-list"></div>
       <div id="bulk-actions" style="display:none">
         <button class="bulk-btn sync-all" onclick="confirmBulkSync()">↻ 전체 동기화</button>
