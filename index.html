@@ -930,14 +930,14 @@ function exportGraph() {
   edges.forEach(e => {
     const a = nodeMap[e.from], b = nodeMap[e.to];
     if (!a?.visible || !b?.visible) return;
-    if (e.manualLink) { ctx2.setLineDash([8/exportScale, 10/exportScale]); ctx2.strokeStyle = 'rgba(255,255,255,0.5)'; ctx2.lineWidth = 1.5/exportScale; }
-    else if (e.weakLink) { ctx2.setLineDash([8/exportScale, 8/exportScale]); ctx2.strokeStyle = 'rgba(255,255,255,0.15)'; ctx2.lineWidth = 1/exportScale; }
-    else { ctx2.setLineDash([]); ctx2.strokeStyle = 'rgba(255,255,255,0.3)'; ctx2.lineWidth = 1.2/exportScale; }
+    if (e.manualLink) { ctx2.setLineDash([8/exportScale, 10/exportScale]); ctx2.strokeStyle = 'rgba(255,255,255,0.8)'; ctx2.lineWidth = 3/exportScale; }
+    else if (e.weakLink) { ctx2.setLineDash([8/exportScale, 8/exportScale]); ctx2.strokeStyle = 'rgba(255,255,255,0.35)'; ctx2.lineWidth = 2/exportScale; }
+    else { ctx2.setLineDash([]); ctx2.strokeStyle = 'rgba(255,255,255,0.6)'; ctx2.lineWidth = 2/exportScale; }
     ctx2.beginPath(); ctx2.moveTo(a.x, a.y); ctx2.lineTo(b.x, b.y); ctx2.stroke();
   });
   ctx2.setLineDash([]);
   visibleNodes.forEach(n => {
-    const r = nodeR(n.level);
+    const r = nodeR(n.level) * 1.5;  // 노드 크기 1.5배
     const rgb = hexToRgb(n.color || '#74b9ff');
     const satRatio = [1,1,0.80,0.65,0.52][Math.min(n.level,4)];
     const bg = [12,13,18];
