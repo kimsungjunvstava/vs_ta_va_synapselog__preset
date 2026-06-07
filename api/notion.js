@@ -14,38 +14,20 @@ export default async function handler(req, res) {
     'Notion-Version': '2022-06-28',
   };
 
-  // [[]] mention으로 참조된 페이지 ID 수집 (중복 제거)
-  const mentionPageIds = new Set();
-
-  // 텍스트 추출 함수 — 볼드 유지 (본문용), mention 수집
+  // 텍스트 추출 함수 — 볼드 유지 (본문용)
   function extractRichText(richTextArr) {
     if (!richTextArr) return '';
     return richTextArr.map(t => {
-      // mention 타입이면 page ID 수집
-      if (t.type === 'mention' && t.mention?.type === 'page') {
-        const mentionId = t.mention.page.id?.replace(/-/g, '');
-        if (mentionId && mentionId !== pageId.replace(/-/g, '')) {
-          mentionPageIds.add(mentionId);
-        }
-      }
       let str = t.plain_text || '';
       if (t.annotations?.bold) str = `**${str}**`;
       return str;
     }).join('');
   }
 
-  // 헤딩 텍스트 추출 — 볼드 무시, mention 수집
+  // 헤딩 텍스트 추출 — 볼드 무시
   function extractHeadingText(richTextArr) {
     if (!richTextArr) return '';
-    return richTextArr.map(t => {
-      if (t.type === 'mention' && t.mention?.type === 'page') {
-        const mentionId = t.mention.page.id?.replace(/-/g, '');
-        if (mentionId && mentionId !== pageId.replace(/-/g, '')) {
-          mentionPageIds.add(mentionId);
-        }
-      }
-      return t.plain_text || '';
-    }).join('');
+    return richTextArr.map(t => t.plain_text || '').join('');
   }
 
   // 데이터베이스 하위 페이지 목록 조회
@@ -186,12 +168,7 @@ export default async function handler(req, res) {
     const pageTitle = extractPageTitle(pageData);
     const markdown = await fetchBlocks(pageId);
 
-    // mentionPageIds: 현재 로드된 pageId 자신은 제외하고 반환
-    res.status(200).json({
-      title: pageTitle,
-      markdown,
-      mentionPageIds: [...mentionPageIds]
-    });
+    res.status(200).json({ title: pageTitle, markdown });
   } catch (e) {
     res.status(500).json({ error: e.message || '서버 오류가 발생했어요' });
   }
