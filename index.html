@@ -888,6 +888,8 @@ function draw() {
     // ── 수동 연결 — 흰색 점선, 검색 시 숨김 ──
     if(e.manualLink) {
       if(hasSearch) return; // 검색 중엔 숨김
+      // 포커스 모드 중: 연결된 노드 중 하나라도 dimmed면 숨김 (단, 둘 다 visible이면 표시)
+      if(_focusMode && na.dimmed && nb.dimmed) return;
       ctx.strokeStyle = `rgba(255,255,255,${isHov ? 0.7 : 0.35})`;
       ctx.lineWidth = (isHov ? 1.8 : 1.2) / scale;
       ctx.setLineDash([5, 6]);
@@ -966,8 +968,8 @@ function draw() {
     const r=nodeR(n.level);
     const nodeColor = n.level===0 ? '#ffffff' : (n.color||'#74b9ff');
 
-    // 수동 연결된 노드 — 해당 노드 색상 글로우
-    const isManualLinked = !_connectMode && edges.some(e => e.manualLink && (e.from === n.id || e.to === n.id));
+    // 수동 연결된 노드 — 포커스 모드일 때만 해당 노드 색상 글로우
+    const isManualLinked = _focusMode && edges.some(e => e.manualLink && (e.from === n.id || e.to === n.id));
     if(isManualLinked && !isDim) {
       const rgbM = hexToRgb(nodeColor);
       ctx.beginPath(); ctx.arc(n.x, n.y, r+14, 0, Math.PI*2);
@@ -1119,7 +1121,16 @@ function applyFocusMode(nodeId) {
   if(!_focusMode) return;
   _focusNodeId=nodeId;
   const connectedIds=new Set([nodeId]);
-  edges.forEach(e=>{ if(e.from===nodeId) connectedIds.add(e.to); if(e.to===nodeId) connectedIds.add(e.from); });
+  edges.forEach(e=>{
+    if(e.from===nodeId) connectedIds.add(e.to);
+    if(e.to===nodeId) connectedIds.add(e.from);
+  });
+  // 수동 연결 엣지 — 포커스 노드와 manualLink로 연결된 노드도 표시
+  edges.forEach(e=>{
+    if(!e.manualLink) return;
+    if(connectedIds.has(e.from)) connectedIds.add(e.to);
+    if(connectedIds.has(e.to)) connectedIds.add(e.from);
+  });
   nodes.forEach(n=>{n.dimmed=!connectedIds.has(n.id);});
   isStable=false;
 }
