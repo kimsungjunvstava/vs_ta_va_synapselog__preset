@@ -29,7 +29,10 @@ canvas { display: block; }
 .panel-box { background: rgba(14,16,24,0.9); border: 1px solid rgba(255,255,255,0.09); border-top: 2px solid rgba(255,159,67,0.6); border-radius: 12px; padding: 12px 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); backdrop-filter: blur(10px); }
 .panel-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #ff9f43; margin-bottom: 10px; }
 #sidebar { position: fixed; top: 0; left: 0; width: 380px; height: 100vh; z-index: 200; display: flex; flex-direction: column; background: rgba(10,11,18,0.96); border-right: 1px solid rgba(255,255,255,0.07); backdrop-filter: blur(12px); transition: transform 0.28s cubic-bezier(0.4,0,0.2,1); overflow-y: auto; overflow-x: hidden; }
-#sidebar::-webkit-scrollbar { width: 3px; }
+#sidebar-page-list::-webkit-scrollbar { width: 3px; }
+#sidebar-page-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.sidebar-page-item { font-size: 12px; color: rgba(255,255,255,0.65); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 6px 9px; cursor: pointer; transition: background 0.15s, border-color 0.15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sidebar-page-item:hover { background: rgba(255,159,67,0.1); border-color: rgba(255,159,67,0.3); color: #ff9f43; }
 #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 #sidebar.collapsed { transform: translateX(-380px); }
 #sidebar-logo { padding: 18px 16px 14px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; text-align: center; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.02em; }
@@ -195,8 +198,19 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
   <div id="sidebar-content">
     <div id="add-page-panel" class="panel-box">
       <div class="panel-title">페이지 추가</div>
+      <!-- 노션 페이지 목록 -->
+      <div id="sidebar-page-list-wrap" style="display:none; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
+          <span style="font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:0.05em; text-transform:uppercase;">페이지 목록</span>
+          <button onclick="refreshSidebarPageList()" title="목록 새로고침" style="background:none; border:none; color:rgba(255,255,255,0.4); cursor:pointer; font-size:13px; padding:0 2px; line-height:1; transition:color 0.2s;" onmouseover="this.style.color='#ff9f43'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">↻</button>
+        </div>
+        <div id="sidebar-page-list" style="max-height:90px; overflow-y:auto; display:flex; flex-direction:column; gap:3px;">
+          <div style="font-size:11px; color:rgba(255,255,255,0.25); padding:6px 0; text-align:center;">불러오는 중...</div>
+        </div>
+      </div>
+      <!-- 수동 입력 -->
       <div style="position:relative; display:flex; align-items:center;">
-        <input type="text" id="add-page-id" placeholder="노션 링크 붙여넣기 혹은 .MD파일 불러오기" style="padding-right:52px; flex:1;" />
+        <input type="text" id="add-page-id" placeholder="노션 링크 붙여넣기 or .MD파일 불러오기" style="padding-right:52px; flex:1;" />
         <div style="position:absolute; right:8px; display:flex; align-items:center; gap:7px;">
           <span style="color:rgba(255,255,255,0.25); display:flex; pointer-events:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
           <label for="md-import-file" title=".md 파일 임포트" style="cursor:pointer; color:#ff9f43; display:flex; align-items:center; margin:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></label>
@@ -435,6 +449,7 @@ if (_savedToken) {
     loop();
     setTimeout(restorePageList, 500);
     setTimeout(loadManualLinks, 800);
+    setTimeout(initSidebarPageList, 600);
   });
 }
 
@@ -572,6 +587,7 @@ async function startWithSelected() {
   document.getElementById('login-screen').style.display = 'none';
   buildGraph();
   loop();
+  setTimeout(initSidebarPageList, 300);
   for (const pageId of window._selectedPageIds) {
     await addPageById(pageId);
   }
@@ -581,9 +597,48 @@ function skipToGraph() {
   document.getElementById('login-screen').style.display = 'none';
   buildGraph();
   loop();
+  setTimeout(initSidebarPageList, 300);
 }
 
-// 페이지 ID로 직접 추가 (addPage 내부 로직)
+// 사이드바 페이지 목록 초기화 (그래프 진입 후 토큰 있을 때)
+async function initSidebarPageList() {
+  if (!_savedToken) return;
+  const wrap = document.getElementById('sidebar-page-list-wrap');
+  if (wrap) wrap.style.display = 'block';
+  await refreshSidebarPageList();
+}
+
+async function refreshSidebarPageList() {
+  if (!_savedToken) return;
+  const listEl = document.getElementById('sidebar-page-list');
+  if (!listEl) return;
+  listEl.innerHTML = '<div style="font-size:11px; color:rgba(255,255,255,0.25); padding:6px 0; text-align:center;">불러오는 중...</div>';
+  try {
+    const res = await fetch('/api/notion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: _savedToken, action: 'list' })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    window._sidebarPageList = data.pages || [];
+    renderSidebarPageList(window._sidebarPageList);
+  } catch(e) {
+    listEl.innerHTML = `<div style="font-size:11px; color:#ff6b6b; padding:6px 0; text-align:center;">${e.message}</div>`;
+  }
+}
+
+function renderSidebarPageList(pages) {
+  const listEl = document.getElementById('sidebar-page-list');
+  if (!listEl) return;
+  if (!pages.length) {
+    listEl.innerHTML = '<div style="font-size:11px; color:rgba(255,255,255,0.25); padding:6px 0; text-align:center;">페이지 없음</div>';
+    return;
+  }
+  listEl.innerHTML = pages.map(p => `
+    <div class="sidebar-page-item" onclick="addPageById('${p.id}')" title="${p.title}">📄 ${p.title}</div>
+  `).join('');
+}
 async function addPageById(pageId) {
   if (_addedPageIds.has(pageId)) return;
   showLoading('노션 페이지 불러오는 중...');
