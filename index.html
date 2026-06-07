@@ -1347,25 +1347,61 @@ window.addEventListener('resize',()=>{
   isStable=false;
 });
 
-// ── [[]] mention 링크 처리 — 이미 로드된 페이지끼리만 연결 ──
+// ── [[]] mention 링크 처리 ──
+// 그래프에 있으면 연결, 없으면 유령 노드 생성
 function processMentionLinks(mentionPageIds, sourcePageId) {
   if (!mentionPageIds || mentionPageIds.length === 0) return;
   const sourceRoot = nodes.find(n => n.sourcePageId === sourcePageId && n.level === 0);
   if (!sourceRoot) return;
+
   for (const mId of mentionPageIds) {
     const targetRoot = nodes.find(n => n.sourcePageId === mId && n.level === 0);
-    if (!targetRoot) continue;
-    const alreadyLinked = edges.some(e =>
-      e.mentionLink && (
-        (e.from === sourceRoot.id && e.to === targetRoot.id) ||
-        (e.from === targetRoot.id && e.to === sourceRoot.id)
-      )
-    );
-    if (!alreadyLinked) {
-      edges.push({ from: sourceRoot.id, to: targetRoot.id, mentionLink: true });
-      isStable = false;
+
+    if (targetRoot) {
+      // 이미 로드된 페이지 → 바로 연결
+      const alreadyLinked = edges.some(e =>
+        e.mentionLink && (
+          (e.from === sourceRoot.id && e.to === targetRoot.id) ||
+          (e.from === targetRoot.id && e.to === sourceRoot.id)
+        )
+      );
+      if (!alreadyLinked) {
+        edges.push({ from: sourceRoot.id, to: targetRoot.id, mentionLink: true });
+        isStable = false;
+      }
+    } else {
+      // 없는 페이지 → 유령 노드 생성
+      addGhostNode(mId, sourceRoot);
     }
   }
+}
+
+function addGhostNode(ghostPageId, sourceRoot) {
+  // 이미 유령 노드 있으면 엣지만 추가
+  const existingGhost = nodes.find(n => n.sourcePageId === ghostPageId);
+  if (existingGhost) {
+    const alreadyLinked = edges.some(e =>
+      e.mentionLink && (
+        (e.from === sourceRoot.id && e.to === existingGhost.id) ||
+        (e.from === existingGhost.id && e.to === sourceRoot.id)
+      )
+    );
+    if (!alreadyLinked) edges.push({ from: sourceRoot.id, to: existingGhost.id, mentionLink: true });
+    return;
+  }
+  const ghostId = 'ghost_' + ghostPageId;
+  const ghostNode = {
+    id: ghostId, label: '비공개 페이지', cat: 'ghost', desc: '', date: '',
+    x: sourceRoot ? sourceRoot.x + (Math.random()-0.5)*200 : W/2,
+    y: sourceRoot ? sourceRoot.y + (Math.random()-0.5)*200 : H/2,
+    vx: 0, vy: 0, level: 1, fixed: false,
+    color: 'rgba(255,255,255,0.2)',
+    ghostNode: true, sourcePageId: ghostPageId, visible: true
+  };
+  nodes.push(ghostNode);
+  nodeMap[ghostId] = ghostNode;
+  if (sourceRoot) edges.push({ from: sourceRoot.id, to: ghostId, mentionLink: true });
+  isStable = false;
 }
 
 updateConfig();
