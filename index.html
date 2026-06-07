@@ -76,7 +76,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 .btn-remove { background: none; border: none; cursor: pointer; font-size: 11px; color: #ff9f43; padding: 1px 3px; line-height: 1; transition: color 0.2s; }
 .btn-remove:hover { color: #ffbe76; }
 #bulk-actions { display: flex; gap: 6px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); }
-.bulk-btn { flex: 1; font-size: 9px; font-weight: 700; font-family: inherit; padding: 5px 4px; border-radius: 5px; cursor: pointer; letter-spacing: 0.04em; transition: background 0.2s; }
+.bulk-btn { flex: 1; font-size: 13px; font-weight: 700; font-family: inherit; padding: 5px 4px; border-radius: 5px; cursor: pointer; letter-spacing: 0.04em; transition: background 0.2s; }
 .bulk-btn.sync-all { background: rgba(255,159,67,0.1); border: 1px solid rgba(255,159,67,0.3); color: #ff9f43; }
 .bulk-btn.sync-all:hover { background: rgba(255,159,67,0.2); }
 .bulk-btn.close-all { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); }
@@ -141,11 +141,11 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 .toggle-track { width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; }
 .toggle-thumb { display: none; }
 .toggle-switch .r-off-outer { stroke: #ff9f43; fill: none; stroke-width: 1.5; display: block; }
-.toggle-switch .r-off-mid1 { stroke: #ff9f43; fill: none; stroke-width: 1; display: block; }
-.toggle-switch .r-off-mid2 { stroke: #ff9f43; fill: none; stroke-width: 1; display: block; }
+.toggle-switch .r-off-mid1 { stroke: #ff9f43; fill: none; stroke-width: 2; display: block; }
+.toggle-switch .r-off-mid2 { display: none; }
 .toggle-switch .r-on-outer { stroke: #ff9f43; fill: none; stroke-width: 1.5; display: none; }
 .toggle-switch .r-on-center { fill: #ff9f43; stroke: none; display: none; }
-.toggle-switch input:checked ~ .toggle-track .r-off-outer, .toggle-switch input:checked ~ .toggle-track .r-off-mid1, .toggle-switch input:checked ~ .toggle-track .r-off-mid2 { display: none; }
+.toggle-switch input:checked ~ .toggle-track .r-off-outer, .toggle-switch input:checked ~ .toggle-track .r-off-mid1 { display: none; }
 .toggle-switch input:checked ~ .toggle-track .r-on-outer, .toggle-switch input:checked ~ .toggle-track .r-on-center { display: block; }
 #sidebar-toggle svg, #detail-panel-sidebar-toggle svg { shape-rendering: crispEdges; display: block; }
 #loading-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(10,12,20,0.7); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 14px; }
@@ -165,8 +165,18 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
       <label>Notion API Token</label>
       <input type="password" id="input-token" placeholder="secret_xxxxxxxxxxxxxx" />
     </div>
-    <button id="login-btn" onclick="startGraph()">시작하기</button>
+    <button id="login-btn" onclick="startGraph()">노션으로 시작하기</button>
     <div id="login-error"></div>
+    <div style="display:flex; align-items:center; gap:10px; margin:14px 0 10px;">
+      <div style="flex:1; height:1px; background:rgba(255,255,255,0.08);"></div>
+      <span style="font-size:11px; color:rgba(255,255,255,0.25);">또는</span>
+      <div style="flex:1; height:1px; background:rgba(255,255,255,0.08);"></div>
+    </div>
+    <label for="login-md-file" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:11px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:rgba(255,255,255,0.7); font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s; letter-spacing:0.04em;" onmouseover="this.style.background='rgba(255,255,255,0.09)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      .MD 파일로 시작하기
+    </label>
+    <input type="file" id="login-md-file" accept=".md,.txt" style="display:none;" onchange="startWithMd(event)">
     <div class="login-help">
       <b>토큰 발급 방법</b><br>
       1. <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> 접속<br>
@@ -208,7 +218,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
       <div class="panel-title">그래프 설정</div>
       <div class="ctrl-group"><div class="ctrl-label-row"><span>노드 반발력 (Repulsion)</span><span class="val" id="v-rep">5</span></div><input type="range" id="cfg-rep" min="100" max="2000" step="50" value="500"></div>
       <div class="ctrl-group"><div class="ctrl-label-row"><span>중력 (Gravity)</span><span class="val" id="v-grav">10</span></div><input type="range" id="cfg-grav" min="0.0001" max="0.0030" step="0.0001" value="0.0010"></div>
-      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">노드 제목 (Node Title)</span><label class="toggle-switch"><input type="checkbox" id="label-toggle-input" checked onchange="toggleLabels()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="8" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
+      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">제목 숨김 (Title Hidden)</span><label class="toggle-switch"><input type="checkbox" id="label-toggle-input" checked onchange="toggleLabels()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="8" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
       <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">포커스 모드 (Focus Mode)</span><label class="toggle-switch"><input type="checkbox" id="focus-toggle-input" onchange="toggleFocusMode()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="8" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
       <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">연결 모드 (Connect Mode)</span><label class="toggle-switch"><input type="checkbox" id="connect-toggle-input" onchange="toggleConnectMode()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="8" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
       <button onclick="exportGraph()" style="width:100%; margin-top:8px; background:rgba(255,159,67,0.12); border:1px solid rgba(255,159,67,0.4); color:#ff9f43; border-radius:7px; padding:8px 12px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:space-between;" onmouseover="this.style.background='rgba(255,159,67,0.22)'" onmouseout="this.style.background='rgba(255,159,67,0.12)'"><span>그래프 이미지 저장</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
@@ -428,6 +438,36 @@ if (_savedToken) {
   });
 }
 
+// MD 파일로 시작
+function startWithMd(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('login-screen').style.display = 'none';
+    buildGraph();
+    loop();
+    const markdown = e.target.result;
+    const title = file.name.replace(/\.md$|\.txt$/i, '');
+    const pageId = 'md_' + Date.now();
+    setTimeout(() => {
+      mergeGraph(title, markdown, pageId);
+      _addedPageIds.add(pageId);
+      const list = document.getElementById('added-pages-list');
+      const item = document.createElement('div');
+      item.className = 'added-page-item';
+      item.dataset.pageId = pageId;
+      item.innerHTML = `<span>📄 ${title} <span style="color:rgba(255,159,67,0.5);font-size:9px;">MD</span></span><div class="btn-group"><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
+      list.appendChild(item);
+      updateBulkActionsVisibility();
+      savePageList();
+    }, 100);
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// 노션 토큰으로 시작 → 페이지 목록 표시
 async function startGraph() {
   const token = document.getElementById('input-token').value.trim();
   const errEl = document.getElementById('login-error');
@@ -438,9 +478,142 @@ async function startGraph() {
   }
   _savedToken = token;
   try { sessionStorage.setItem('snlog_token', token); } catch(e) {}
+  errEl.style.display = 'none';
+
+  // 페이지 목록 UI로 전환
+  showPagePicker();
+}
+
+// 페이지 목록 화면
+async function showPagePicker() {
+  const loginBox = document.getElementById('login-box');
+  loginBox.innerHTML = `
+    <div class="login-title">Synapse<span>Log</span></div>
+    <div class="login-sub" style="margin-bottom:14px;">불러올 페이지를 선택하세요</div>
+    <div style="position:relative; margin-bottom:10px;">
+      <input type="text" id="page-search-input" placeholder="페이지 검색..." style="width:100%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:9px 12px; font-size:13px; font-family:inherit; color:#fff; outline:none; transition:border-color 0.2s;" oninput="filterPageList(this.value)" onfocus="this.style.borderColor='rgba(255,159,67,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'"/>
+    </div>
+    <div id="page-list" style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:4px; margin-bottom:12px;">
+      <div style="text-align:center; color:rgba(255,255,255,0.3); font-size:12px; padding:20px 0;">불러오는 중...</div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button onclick="startWithSelected()" style="flex:1; background:rgba(255,159,67,0.15); border:1px solid rgba(255,159,67,0.4); border-radius:8px; padding:11px; color:#ff9f43; font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,159,67,0.25)'" onmouseout="this.style.background='rgba(255,159,67,0.15)'">선택한 페이지 불러오기</button>
+      <button onclick="skipToGraph()" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:11px 14px; color:rgba(255,255,255,0.5); font-size:13px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.09)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">건너뛰기</button>
+    </div>
+    <div id="page-pick-error" style="font-size:12px; color:#ff6b6b; text-align:center; margin-top:8px; display:none;"></div>
+  `;
+
+  // 페이지 목록 fetch
+  try {
+    const res = await fetch('/api/notion', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: _savedToken, action: 'list' })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '목록을 불러오지 못했어요');
+    window._pageList = data.pages || [];
+    renderPageList(window._pageList);
+  } catch(e) {
+    document.getElementById('page-list').innerHTML = `<div style="text-align:center; color:#ff6b6b; font-size:12px; padding:16px 0;">${e.message}</div>`;
+  }
+}
+
+window._selectedPageIds = new Set();
+
+function renderPageList(pages) {
+  const list = document.getElementById('page-list');
+  if (!list) return;
+  if (pages.length === 0) {
+    list.innerHTML = '<div style="text-align:center; color:rgba(255,255,255,0.3); font-size:12px; padding:20px 0;">페이지가 없어요</div>';
+    return;
+  }
+  list.innerHTML = pages.map(p => `
+    <div class="page-pick-item" data-id="${p.id}" onclick="togglePageSelect('${p.id}', this)"
+      style="display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); cursor:pointer; transition:background 0.15s; font-size:13px; color:rgba(255,255,255,0.75);">
+      <div style="width:16px; height:16px; border-radius:4px; border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s;" class="pick-check"></div>
+      <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</span>
+    </div>
+  `).join('');
+}
+
+function togglePageSelect(pageId, el) {
+  if (window._selectedPageIds.has(pageId)) {
+    window._selectedPageIds.delete(pageId);
+    el.style.background = 'rgba(255,255,255,0.04)';
+    el.style.borderColor = 'rgba(255,255,255,0.08)';
+    el.querySelector('.pick-check').style.background = '';
+    el.querySelector('.pick-check').style.borderColor = 'rgba(255,255,255,0.25)';
+    el.querySelector('.pick-check').innerHTML = '';
+  } else {
+    window._selectedPageIds.add(pageId);
+    el.style.background = 'rgba(255,159,67,0.1)';
+    el.style.borderColor = 'rgba(255,159,67,0.35)';
+    el.querySelector('.pick-check').style.background = '#ff9f43';
+    el.querySelector('.pick-check').style.borderColor = '#ff9f43';
+    el.querySelector('.pick-check').innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4,7 8,3" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+}
+
+function filterPageList(query) {
+  if (!window._pageList) return;
+  const filtered = query.trim()
+    ? window._pageList.filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
+    : window._pageList;
+  renderPageList(filtered);
+}
+
+async function startWithSelected() {
+  if (window._selectedPageIds.size === 0) {
+    const errEl = document.getElementById('page-pick-error');
+    if (errEl) { errEl.textContent = '페이지를 하나 이상 선택해주세요'; errEl.style.display = 'block'; }
+    return;
+  }
   document.getElementById('login-screen').style.display = 'none';
   buildGraph();
   loop();
+  for (const pageId of window._selectedPageIds) {
+    await addPageById(pageId);
+  }
+}
+
+function skipToGraph() {
+  document.getElementById('login-screen').style.display = 'none';
+  buildGraph();
+  loop();
+}
+
+// 페이지 ID로 직접 추가 (addPage 내부 로직)
+async function addPageById(pageId) {
+  if (_addedPageIds.has(pageId)) return;
+  showLoading('노션 페이지 불러오는 중...');
+  try {
+    const cacheKey = `snlog_${pageId}`;
+    let data;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) { try { data = JSON.parse(cached); } catch(e) { data = null; } }
+    if (!data) {
+      const res = await fetch('/api/notion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: _savedToken, pageId })
+      });
+      const text = await res.text();
+      try { data = JSON.parse(text); } catch(e) { return; }
+      if (!res.ok) return;
+      try { sessionStorage.setItem(cacheKey, JSON.stringify({ ...data, _cachedAt: Date.now() })); } catch(e) {}
+    }
+    _addedPageIds.add(pageId);
+    mergeGraph(data.title || '추가 페이지', data.markdown || '', pageId);
+    const list = document.getElementById('added-pages-list');
+    const item = document.createElement('div');
+    item.className = 'added-page-item';
+    item.dataset.pageId = pageId;
+    item.innerHTML = `<span>📄 ${data.title || pageId}</span><div class="btn-group"><button class="btn-sync" title="동기화" onclick="syncPage('${pageId}')">↻</button><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
+    list.appendChild(item);
+    updateBulkActionsVisibility();
+    savePageList();
+  } catch(e) {} finally { hideLoading(); }
 }
 
 function exportGraph() {
