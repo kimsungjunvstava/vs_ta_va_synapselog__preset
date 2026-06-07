@@ -206,8 +206,8 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
     </div>
     <div id="left-panel" class="panel-box">
       <div class="panel-title">그래프 설정</div>
-      <div class="ctrl-group"><div class="ctrl-label-row"><span>노드 반발력 (Repulsion)</span><span class="val" id="v-rep">500</span></div><input type="range" id="cfg-rep" min="100" max="2000" step="50" value="500"></div>
-      <div class="ctrl-group"><div class="ctrl-label-row"><span>중력 (Gravity)</span><span class="val" id="v-grav">0.0001</span></div><input type="range" id="cfg-grav" min="0.0001" max="0.0030" step="0.0001" value="0.0001"></div>
+      <div class="ctrl-group"><div class="ctrl-label-row"><span>노드 반발력 (Repulsion)</span><span class="val" id="v-rep">5</span></div><input type="range" id="cfg-rep" min="100" max="2000" step="50" value="500"></div>
+      <div class="ctrl-group"><div class="ctrl-label-row"><span>중력 (Gravity)</span><span class="val" id="v-grav">10</span></div><input type="range" id="cfg-grav" min="0.0001" max="0.0030" step="0.0001" value="0.0010"></div>
       <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">노드 제목 (Node Title)</span><label class="toggle-switch"><input type="checkbox" id="label-toggle-input" checked onchange="toggleLabels()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="8" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
       <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">포커스 모드 (Focus Mode)</span><label class="toggle-switch"><input type="checkbox" id="focus-toggle-input" onchange="toggleFocusMode()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="8" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
       <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">연결 모드 (Connect Mode)</span><label class="toggle-switch"><input type="checkbox" id="connect-toggle-input" onchange="toggleConnectMode()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="8" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
@@ -248,13 +248,13 @@ let panX = 0, panY = 0;
 let searchKeyword = '';
 let searchMatches = new Set();
 let isStable = false;
-let CONFIG = { repulsion: 500, gravity: 0.0001, linkDistance: 60 };
+let CONFIG = { repulsion: 500, gravity: 0.0010, linkDistance: 60 };
 
 function updateConfig() {
   CONFIG.repulsion = parseFloat(cfgRep.value);
   CONFIG.gravity = parseFloat(cfgGrav.value);
-  vRep.textContent = cfgRep.value;
-  vGrav.textContent = cfgGrav.value;
+  vRep.textContent = Math.round(parseFloat(cfgRep.value) / 100);
+  vGrav.textContent = Math.round(parseFloat(cfgGrav.value) * 10000);
   isStable = false;
 }
 cfgRep.addEventListener('input', updateConfig);
