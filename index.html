@@ -384,7 +384,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
       </div>
     </div>
 
-    <!-- API 토큰 수정 -->
+    <!-- API 토큰 -->
     <div class="settings-section">
       <div class="settings-section-title">API 토큰</div>
       <div class="token-edit-row">
@@ -394,7 +394,17 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
       <div id="settings-token-msg" style="font-size:11px; color:rgba(255,159,67,0.7); margin-top:6px; display:none;"></div>
     </div>
 
-    <!-- 스토리지 + 캐시 통합 -->
+    <!-- 이미지 저장 크기 -->
+    <div class="settings-section">
+      <div class="settings-section-title">이미지 저장 크기</div>
+      <div class="s-size-group">
+        <button class="s-size-btn" id="s-size-1024" onclick="setExportSize(1024)">1024px</button>
+        <button class="s-size-btn active" id="s-size-2048" onclick="setExportSize(2048)">2048px</button>
+        <button class="s-size-btn" id="s-size-4096" onclick="setExportSize(4096)">4096px</button>
+      </div>
+    </div>
+
+    <!-- 저장 & 캐시 통합 -->
     <div class="settings-section">
       <div class="settings-section-title">저장 & 캐시</div>
       <div class="settings-row">
@@ -412,39 +422,32 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
       <div style="height:10px;"></div>
       <div class="settings-row">
         <div><div class="settings-row-label">페이지 캐시</div><div class="settings-row-sub">불러온 노션 페이지 내용</div></div>
-        <label class="s-toggle"><input type="checkbox" id="s-scope-pages" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label class="s-toggle"><input type="checkbox" id="s-scope-pages" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+          <button class="s-delete-btn" onclick="clearCache('pages')">삭제</button>
+        </div>
       </div>
       <div class="settings-row">
         <div><div class="settings-row-label">그래프 슬라이더</div><div class="settings-row-sub">반발력·중력 수치</div></div>
-        <label class="s-toggle"><input type="checkbox" id="s-scope-slider" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label class="s-toggle"><input type="checkbox" id="s-scope-slider" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+          <button class="s-delete-btn" onclick="clearCache('slider')">삭제</button>
+        </div>
       </div>
       <div class="settings-row">
         <div><div class="settings-row-label">연결 모드 캐시</div><div class="settings-row-sub">수동 연결 엣지</div></div>
-        <label class="s-toggle"><input type="checkbox" id="s-scope-connect" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label class="s-toggle"><input type="checkbox" id="s-scope-connect" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+          <button class="s-delete-btn" onclick="clearCache('connect')">삭제</button>
+        </div>
       </div>
       <div class="settings-row">
         <div><div class="settings-row-label">키워드 검색 기록</div><div class="settings-row-sub">검색 히스토리</div></div>
-        <label class="s-toggle"><input type="checkbox" id="s-scope-search" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <label class="s-toggle"><input type="checkbox" id="s-scope-search" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+          <button class="s-delete-btn" onclick="clearCache('search')">삭제</button>
+        </div>
       </div>
-    </div>
-
-    <!-- 이미지 저장 크기 -->
-    <div class="settings-section">
-      <div class="settings-section-title">이미지 저장 크기</div>
-      <div class="s-size-group">
-        <button class="s-size-btn" id="s-size-1024" onclick="setExportSize(1024)">1024px</button>
-        <button class="s-size-btn active" id="s-size-2048" onclick="setExportSize(2048)">2048px</button>
-        <button class="s-size-btn" id="s-size-4096" onclick="setExportSize(4096)">4096px</button>
-      </div>
-    </div>
-
-    <!-- 캐시 삭제 -->
-    <div class="settings-section">
-      <div class="settings-section-title">캐시 삭제</div>
-      <div class="settings-row"><span class="settings-row-label">페이지 캐시</span><button class="s-delete-btn" onclick="clearCache('pages')">삭제</button></div>
-      <div class="settings-row"><span class="settings-row-label">그래프 슬라이더</span><button class="s-delete-btn" onclick="clearCache('slider')">삭제</button></div>
-      <div class="settings-row"><span class="settings-row-label">연결 모드 캐시</span><button class="s-delete-btn" onclick="clearCache('connect')">삭제</button></div>
-      <div class="settings-row"><span class="settings-row-label">키워드 검색 기록</span><button class="s-delete-btn" onclick="clearCache('search')">삭제</button></div>
       <div class="settings-row"><span class="settings-row-label">전체 캐시</span><button class="s-delete-btn" onclick="clearCache('all')">전체 삭제</button></div>
     </div>
 
