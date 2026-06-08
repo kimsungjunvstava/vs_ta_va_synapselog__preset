@@ -961,11 +961,11 @@ function exportGraph() {
       const childCount = getChildCount(n.id);
       if (childCount >= 3) {
         const hubStrength = Math.min((childCount - 2) / 4, 1);
-        const glowR = r + 10 + hubStrength * 20;
+        const glowR = r + 8 + hubStrength * 22;
         const rgbH = hexToRgb(nodeColor);
         ctx2.beginPath(); ctx2.arc(n.x, n.y, glowR, 0, Math.PI*2);
         const gH = ctx2.createRadialGradient(n.x, n.y, r, n.x, n.y, glowR);
-        gH.addColorStop(0, rgbStr(rgbH, 0.45 + hubStrength * 0.25));
+        gH.addColorStop(0, rgbStr(rgbH, 0.28 + hubStrength * 0.15));
         gH.addColorStop(1, rgbStr(rgbH, 0));
         ctx2.fillStyle = gH; ctx2.fill();
       }
@@ -1490,7 +1490,7 @@ function draw() {
       const childCount = getChildCount(n.id);
       if(childCount >= 3) {
         const hubStrength = Math.min((childCount - 2) / 4, 1);
-        const glowR = r + 6 + hubStrength * 12;
+        const glowR = r + 8 + hubStrength * 22;
         const rgbH = hexToRgb(nodeColor);
         ctx.beginPath(); ctx.arc(n.x, n.y, glowR, 0, Math.PI*2);
         const gH = ctx.createRadialGradient(n.x, n.y, r, n.x, n.y, glowR);
@@ -1614,18 +1614,26 @@ function toggleConnectMode() {
 function handleConnectClick(n) {
   const s=document.getElementById('status');
   if(!_connectFirstNode) {
+    // 첫 번째 노드 선택
     _connectFirstNode=n; n.connectSelected=true;
     if(s) s.textContent=`"${n.label}" 선택됨 — 연결할 노드를 클릭하세요`;
   } else if(_connectFirstNode.id===n.id) {
+    // 같은 노드 클릭 → 선택 취소
     _connectFirstNode.connectSelected=false; _connectFirstNode=null;
     if(s) s.textContent='연결 모드: 첫 번째 노드를 클릭하세요';
   } else {
+    // 두 번째 노드 → 연결/삭제 후 첫 노드 유지 (A→C 방식)
     const a=_connectFirstNode, b=n;
     const existingManual=edges.find(e=>e.manualLink&&((e.from===a.id&&e.to===b.id)||(e.from===b.id&&e.to===a.id)));
-    if(existingManual) { removeManualLink(a.id,b.id); if(s) s.textContent=`"${a.label}" ↔ "${b.label}" 연결 삭제됨`; }
-    else { edges.push({from:a.id,to:b.id,manualLink:true}); saveManualLinks(); if(s) s.textContent=`"${a.label}" ↔ "${b.label}" 연결됨`; }
-    a.connectSelected=false; _connectFirstNode=null;
-    setTimeout(()=>{if(s)s.textContent='연결 모드: 첫 번째 노드를 클릭하세요';},2000);
+    if(existingManual) {
+      removeManualLink(a.id,b.id);
+      if(s) s.textContent=`"${a.label}" ↔ "${b.label}" 연결 삭제 — 계속 연결할 노드를 클릭하세요`;
+    } else {
+      edges.push({from:a.id,to:b.id,manualLink:true}); saveManualLinks();
+      if(s) s.textContent=`"${a.label}" ↔ "${b.label}" 연결됨 — 계속 연결할 노드를 클릭하세요`;
+    }
+    // 첫 노드 유지 (A→C 방식)
+    // b는 선택 해제하지 않음 (다음 클릭 대기)
   }
   isStable=false;
 }
