@@ -1896,12 +1896,13 @@ canvas.addEventListener('mouseup',e=>{
   const n=getNodeAt(e.clientX,e.clientY);
   if(elapsed<150&&n&&n===mouseDownNode&&n.level>0){
     if(_connectMode){handleConnectClick(n);}else{openPanel(n);}
-  } else if(elapsed<150&&!n&&_focusMode){
-    _focusNodeId=null;
-    nodes.forEach(nd=>{nd.dimmed=false;});
-    isStable=false;
-  } else if(elapsed<150&&!n&&_connectMode){
-    if(_connectFirstNode) {
+  } else if(elapsed<150&&!n){
+    if(_focusMode){
+      _focusNodeId=null;
+      nodes.forEach(nd=>{nd.dimmed=false;});
+      isStable=false;
+    }
+    if(_connectMode && _connectFirstNode){
       _connectFirstNode.connectSelected=false; _connectFirstNode=null;
       const s=document.getElementById('status');
       if(s) s.textContent='연결 모드: 첫 번째 노드를 클릭하세요';
