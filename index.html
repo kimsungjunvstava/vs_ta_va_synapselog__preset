@@ -1442,16 +1442,16 @@ function draw() {
       ctx.fillStyle = gM; ctx.fill();
     }
 
-    // 포커스 모드 — 허브 노드 글로우 (직접 자식 5개 이상, 노드 색상)
+    // 포커스 모드 — 허브 노드 글로우 (직접 자식 2개 이상, 노드 색상)
     if(_focusMode && !isDim && n.level > 0) {
       const childCount = getChildCount(n.id);
-      if(childCount >= 5) {
-        const hubStrength = Math.min((childCount - 4) / 10, 1);
-        const glowR = r + 10 + hubStrength * 14;
+      if(childCount >= 2) {
+        const hubStrength = Math.min((childCount - 1) / 10, 1);
+        const glowR = r + 10 + hubStrength * 30;
         const rgbH = hexToRgb(nodeColor);
         ctx.beginPath(); ctx.arc(n.x, n.y, glowR, 0, Math.PI*2);
         const gH = ctx.createRadialGradient(n.x, n.y, r, n.x, n.y, glowR);
-        gH.addColorStop(0, rgbStr(rgbH, 0.35 + hubStrength * 0.2));
+        gH.addColorStop(0, rgbStr(rgbH, 0.5 + hubStrength * 0.25));
         gH.addColorStop(1, rgbStr(rgbH, 0));
         ctx.fillStyle = gH; ctx.fill();
       }
