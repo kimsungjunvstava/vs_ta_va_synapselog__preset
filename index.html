@@ -1607,7 +1607,7 @@ function toggleConnectMode() {
   _connectMode=cb?cb.checked:!_connectMode;
   _connectFirstNode=null;
   const s=document.getElementById('status');
-  if(_connectMode&&s) s.textContent='연결 모드: 첫 번째 노드를 클릭하세요';
+  if(_connectMode&&s) { s.textContent='연결 모드: 첫 번째 노드를 클릭하세요'; closePanel(); }
   else if(s) s.textContent='';
   isStable=false;
 }
