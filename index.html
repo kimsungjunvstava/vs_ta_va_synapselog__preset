@@ -1379,9 +1379,24 @@ function buildGraph() {
   if (root) { root.x = W/2; root.y = H/2; root.vx = 0; root.vy = 0; }
   nodes.forEach(n => { n.visible = n.level === 0; });
   revealByLevel(new Set(nodes.map(n => n.id)));
+  restoreFixedPositions();
 }
 
 function dist(a,b){ return Math.sqrt((a.x-b.x)**2+(a.y-b.y)**2); }
+
+function saveFixedPositions() {
+  const data = {};
+  nodes.filter(n => n.fixed).forEach(n => { data[n.label] = { x: n.x, y: n.y }; });
+  localStorage.setItem('snlog_fixed_pos', JSON.stringify(data));
+}
+function restoreFixedPositions() {
+  try {
+    const data = JSON.parse(localStorage.getItem('snlog_fixed_pos') || '{}');
+    nodes.forEach(n => {
+      if (data[n.label]) { n.fixed=true; n.x=data[n.label].x; n.y=data[n.label].y; n.vx=0; n.vy=0; }
+    });
+  } catch(e) {}
+}
 
 function simulate() {
   if (isStable && !drag) return;
@@ -1982,6 +1997,7 @@ canvas.addEventListener('mouseup',e=>{
       isStable=false;
     }
   }
+  if(drag&&drag.fixed) saveFixedPositions();
   drag=null;isPanning=false;canvas.style.cursor='default';
 });
 canvas.addEventListener('mouseleave',()=>{
@@ -1994,6 +2010,7 @@ canvas.addEventListener('dblclick',e=>{
   if(!n||n.level===0) return;
   n.fixed=!n.fixed;
   if(!n.fixed){n.vx=0;n.vy=0;}
+  saveFixedPositions();
   isStable=false;
   const s=document.getElementById('status');
   if(s){
