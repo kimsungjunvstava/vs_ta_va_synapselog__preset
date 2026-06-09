@@ -994,8 +994,8 @@ function exportGraph() {
       gS.addColorStop(0, 'rgba(255,255,255,0.4)'); gS.addColorStop(1, 'rgba(255,255,255,0)');
       ctx2.fillStyle = gS; ctx2.fill();
     }
-    // 포커스 허브 글로우
-    if (_focusMode) {
+    // 허브 글로우 (라이브 뷰와 동일하게 항상 표시)
+    if (n.level > 0) {
       const childCount = getChildCount(n.id);
       if (childCount >= 3) {
         const hubStrength = Math.min((childCount - 2) / 4, 1);
