@@ -1021,7 +1021,7 @@ function exportGraph() {
     ctx2.beginPath(); ctx2.arc(n.x, n.y, r, 0, Math.PI*2);
     ctx2.fillStyle = hasSearch && isMatch ? '#ffffff' : rgbStr(rgb, 1);
     ctx2.fill();
-    {
+    if (_showLabels) {
       let lbl = n.label;
       if (n.level >= 2 && lbl.length > 14) lbl = lbl.substring(0,13) + '…';
       const fontSize = n.level <= 1 ? 12 : 10;
