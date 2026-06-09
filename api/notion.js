@@ -191,7 +191,7 @@ export default async function handler(req, res) {
 
             if (useDbNodes) {
               // DB가 2개 이상: DB 이름을 중간 노드로, 하위 페이지를 그 아래에 배치
-              const dbTitle = block.child_database?.title || 'Database';
+              const dbTitle = (block.child_database?.title || 'Database').replace(/\s*\(\d+\)\s*$/, '').trim() || 'Database';
               markdown += `\n# ${dbTitle}\n`;
               for (let i = 0; i < dbPages.length; i += BATCH) {
                 const batch = dbPages.slice(i, i + BATCH);
