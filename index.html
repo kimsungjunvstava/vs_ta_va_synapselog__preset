@@ -293,6 +293,10 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 .shortcut-btn.recording { background: rgba(255,159,67,0.15); border-color: rgba(255,159,67,0.5); color: #ff9f43; animation: sc-pulse 0.9s ease-in-out infinite; }
 .shortcut-btn.fixed-key { opacity: 0.4; cursor: default; }
 @keyframes sc-pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+.s-collapsible { cursor: pointer; display: flex; align-items: center; justify-content: space-between; user-select: none; }
+.s-collapsible:hover { color: rgba(255,255,255,0.6); }
+.s-arrow { font-size: 9px; color: rgba(255,255,255,0.3); transition: transform 0.2s; }
+.s-section-body { overflow: hidden; }
 </style>
 </head>
 <body>
@@ -333,40 +337,40 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
   <div id="sidebar-logo">Synapse<span class="accent">Log</span></div>
   <div id="sidebar-content">
     <div id="add-page-panel" class="panel-box">
-      <div class="panel-title">페이지 추가</div>
+      <div class="panel-title" data-i18n="pg-add">페이지 추가</div>
       <!-- 통합 페이지 목록 -->
       <div id="sidebar-page-list-wrap" style="display:none; margin-bottom:8px;">
         <div id="sidebar-page-list" style="max-height:96px; overflow-y:scroll; display:flex; flex-direction:column; gap:3px; padding-right:2px;"></div>
       </div>
       <!-- 수동 입력 -->
       <div style="position:relative; display:flex; align-items:center;">
-        <input type="text" id="add-page-id" placeholder="노션 링크 붙여넣기 or .MD파일 불러오기" style="padding-right:52px; flex:1;" />
+        <input type="text" id="add-page-id" placeholder="노션 링크 붙여넣기 or .MD파일 불러오기" data-i18n-ph="ph-add" style="padding-right:52px; flex:1;" />
         <div style="position:absolute; right:8px; display:flex; align-items:center; gap:7px;">
           <span style="color:rgba(255,255,255,0.25); display:flex; pointer-events:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
           <label for="md-import-file" title=".md 파일 임포트" style="cursor:pointer; color:#ff9f43; display:flex; align-items:center; margin:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></label>
           <input type="file" id="md-import-file" accept=".md,.txt" style="display:none;" onchange="importMarkdownFile(event)">
         </div>
       </div>
-      <button id="add-page-btn" onclick="addPage()">+ 노드 불러오기</button>
+      <button id="add-page-btn" onclick="addPage()" data-i18n="btn-add">+ 노드 불러오기</button>
       <div id="add-page-error"></div>
       <div id="added-pages-list" style="display:none;"></div>
-      <div id="bulk-actions" style="display:none"><button class="bulk-btn sync-all" onclick="confirmBulkSync()">전체 동기화</button><button class="bulk-btn close-all" onclick="confirmBulkClose()">전체 닫기</button></div>
+      <div id="bulk-actions" style="display:none"><button class="bulk-btn sync-all" onclick="confirmBulkSync()" data-i18n="btn-sync-all">전체 동기화</button><button class="bulk-btn close-all" onclick="confirmBulkClose()" data-i18n="btn-close-all">전체 닫기</button></div>
     </div>
     <div id="search-panel" class="panel-box">
-      <div class="panel-title">키워드 검색</div>
-      <div id="search-bar"><input type="text" id="search-input" placeholder="키워드 검색" /><button id="clear-btn">✕</button><button id="search-btn" aria-label="검색"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6.5" cy="6.5" r="4.5" stroke="#ff9f43" stroke-width="1.6"/><line x1="10" y1="10" x2="14" y2="14" stroke="#ff9f43" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+      <div class="panel-title" data-i18n="kw-search">키워드 검색</div>
+      <div id="search-bar"><input type="text" id="search-input" placeholder="키워드 검색" data-i18n-ph="ph-search" /><button id="clear-btn">✕</button><button id="search-btn" aria-label="검색"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6.5" cy="6.5" r="4.5" stroke="#ff9f43" stroke-width="1.6"/><line x1="10" y1="10" x2="14" y2="14" stroke="#ff9f43" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
       <div id="search-result-count"></div>
       <div id="search-history"></div>
     </div>
     <div id="left-panel" class="panel-box">
-      <div class="panel-title">그래프 설정</div>
-      <div class="ctrl-group"><div class="ctrl-label-row"><span>노드 반발력 (Repulsion)</span><span class="val" id="v-rep">5</span></div><input type="range" id="cfg-rep" min="100" max="2000" step="50" value="500"></div>
-      <div class="ctrl-group"><div class="ctrl-label-row"><span>중력 (Gravity)</span><span class="val" id="v-grav">10</span></div><input type="range" id="cfg-grav" min="0.0001" max="0.0030" step="0.0001" value="0.0010"></div>
-      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">제목 표시 (Title Mark)</span><label class="toggle-switch"><input type="checkbox" id="label-toggle-input" checked onchange="toggleLabels()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="4" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
-      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">포커스 모드 (Focus Mode)</span><label class="toggle-switch"><input type="checkbox" id="focus-toggle-input" onchange="toggleFocusMode()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="4" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
-      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);">연결 모드 (Connect Mode)</span><label class="toggle-switch"><input type="checkbox" id="connect-toggle-input" onchange="toggleConnectMode()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="4" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
-      <button onclick="fitGraph()" style="width:100%; margin-top:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.7); border-radius:7px; padding:8px 12px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:space-between;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'"><span>화면 맞춤(Fit to View)</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
-      <button onclick="exportGraph()" style="width:100%; margin-top:6px; background:rgba(255,159,67,0.12); border:1px solid rgba(255,159,67,0.4); color:#ff9f43; border-radius:7px; padding:8px 12px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:space-between;" onmouseover="this.style.background='rgba(255,159,67,0.22)'" onmouseout="this.style.background='rgba(255,159,67,0.12)'"><span>이미지 내보내기(Export PNG)</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+      <div class="panel-title" data-i18n="graph-cfg">그래프 설정</div>
+      <div class="ctrl-group"><div class="ctrl-label-row"><span data-i18n="lbl-repulsion">노드 반발력 (Repulsion)</span><span class="val" id="v-rep">5</span></div><input type="range" id="cfg-rep" min="100" max="2000" step="50" value="500"></div>
+      <div class="ctrl-group"><div class="ctrl-label-row"><span data-i18n="lbl-gravity">중력 (Gravity)</span><span class="val" id="v-grav">10</span></div><input type="range" id="cfg-grav" min="0.0001" max="0.0030" step="0.0001" value="0.0010"></div>
+      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);" data-i18n="lbl-title">제목 표시 (Title Mark)</span><label class="toggle-switch"><input type="checkbox" id="label-toggle-input" checked onchange="toggleLabels()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="4" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
+      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);" data-i18n="lbl-focus">포커스 모드 (Focus Mode)</span><label class="toggle-switch"><input type="checkbox" id="focus-toggle-input" onchange="toggleFocusMode()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="4" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
+      <div class="ctrl-group" style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:13px; color:rgba(255,255,255,0.75);" data-i18n="lbl-connect">연결 모드 (Connect Mode)</span><label class="toggle-switch"><input type="checkbox" id="connect-toggle-input" onchange="toggleConnectMode()"><span class="toggle-track"><svg width="26" height="26" viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" class="r-off-outer"/><circle cx="13" cy="13" r="4" class="r-off-mid1"/><circle cx="13" cy="13" r="5" class="r-off-mid2"/><circle cx="13" cy="13" r="12" class="r-on-outer"/><circle cx="13" cy="13" r="7" class="r-on-center"/></svg></span></label></div>
+      <button onclick="fitGraph()" style="width:100%; margin-top:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.7); border-radius:7px; padding:8px 12px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:space-between;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'"><span data-i18n="lbl-fit">화면 맞춤(Fit to View)</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+      <button onclick="exportGraph()" style="width:100%; margin-top:6px; background:rgba(255,159,67,0.12); border:1px solid rgba(255,159,67,0.4); color:#ff9f43; border-radius:7px; padding:8px 12px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; transition:background 0.2s; display:flex; align-items:center; justify-content:space-between;" onmouseover="this.style.background='rgba(255,159,67,0.22)'" onmouseout="this.style.background='rgba(255,159,67,0.12)'"><span data-i18n="lbl-export">이미지 내보내기(Export PNG)</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
     </div>
   </div>
   <!-- 사이드바 하단 프로필 -->
@@ -395,19 +399,34 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
       </div>
     </div>
 
+    <!-- 언어 -->
+    <div class="settings-section">
+      <div class="settings-section-title" data-i18n="s-lang">언어 / Language</div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row-label" data-i18n="s-lang-label">언어</div>
+          <div class="settings-row-sub" data-i18n="s-lang-sub">앱 UI 언어를 변경합니다</div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="s-size-btn" id="lang-btn-ko" onclick="setLang('ko')" style="min-width:58px;">한국어</button>
+          <button class="s-size-btn" id="lang-btn-en" onclick="setLang('en')" style="min-width:58px;">English</button>
+        </div>
+      </div>
+    </div>
+
     <!-- API 토큰 -->
     <div class="settings-section">
-      <div class="settings-section-title">API 토큰</div>
+      <div class="settings-section-title" data-i18n="s-api">API 토큰</div>
       <div class="token-edit-row">
-        <input type="password" id="settings-token-input" placeholder="새 토큰 입력..." />
-        <button onclick="updateToken()">저장</button>
+        <input type="password" id="settings-token-input" placeholder="새 토큰 입력..." data-i18n-ph="sc-placeholder-token" />
+        <button onclick="updateToken()" data-i18n="sc-save">저장</button>
       </div>
       <div id="settings-token-msg" style="font-size:11px; color:rgba(255,159,67,0.7); margin-top:6px; display:none;"></div>
     </div>
 
     <!-- 이미지 저장 크기 -->
     <div class="settings-section">
-      <div class="settings-section-title">이미지 저장 크기</div>
+      <div class="settings-section-title" data-i18n="s-imgsize">이미지 저장 크기</div>
       <div class="s-size-group">
         <button class="s-size-btn" id="s-size-1024" onclick="setExportSize(1024)">1024px</button>
         <button class="s-size-btn active" id="s-size-2048" onclick="setExportSize(2048)">2048px</button>
@@ -415,76 +434,80 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
       </div>
     </div>
 
-    <!-- 저장 & 캐시 통합 -->
+    <!-- 키보드 단축키 (접기/펼치기) -->
     <div class="settings-section">
-      <div class="settings-section-title">저장 & 캐시</div>
-      <div class="settings-row">
-        <div>
-          <div class="settings-row-label">로컬 저장 사용</div>
-          <div class="settings-row-sub">브라우저를 닫아도 데이터가 유지됩니다</div>
+      <div class="settings-section-title s-collapsible" onclick="toggleSection('shortcuts')">
+        <span data-i18n="s-shortcuts">키보드 단축키</span>
+        <span class="s-arrow" id="arrow-shortcuts">▾</span>
+      </div>
+      <div class="s-section-body" id="section-shortcuts">
+        <div style="font-size:9px;color:rgba(255,255,255,0.25);margin-bottom:8px;" data-i18n="s-shortcuts-hint">버튼 클릭 후 원하는 키 입력</div>
+        <div class="settings-row">
+          <div><div class="settings-row-label" data-i18n="sc-lbl">제목 표시</div><div class="settings-row-sub">Toggle Labels</div></div>
+          <button class="shortcut-btn" id="sc-toggleLabels" onclick="recordShortcut('toggleLabels',this)">T</button>
         </div>
-        <label class="s-toggle">
-          <input type="checkbox" id="s-local-toggle" onchange="onStorageToggle(this)">
-          <div class="s-toggle-track"></div>
-          <div class="s-toggle-thumb"></div>
-        </label>
-      </div>
-      <div class="s-warn" id="s-local-warn">⚠ API 토큰이 이 기기의 브라우저에 저장됩니다. 공용 컴퓨터에서는 사용을 권장하지 않습니다.</div>
-      <div style="height:10px;"></div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">페이지 캐시</div><div class="settings-row-sub">불러온 노션 페이지 내용</div></div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <label class="s-toggle"><input type="checkbox" id="s-scope-pages" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
-          <button class="s-delete-btn" onclick="clearCache('pages')">삭제</button>
+        <div class="settings-row">
+          <div><div class="settings-row-label" data-i18n="sc-focus">포커스 모드</div><div class="settings-row-sub">Focus Mode</div></div>
+          <button class="shortcut-btn" id="sc-toggleFocusMode" onclick="recordShortcut('toggleFocusMode',this)">F</button>
         </div>
-      </div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">연결 모드 캐시</div><div class="settings-row-sub">수동 연결 엣지</div></div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <label class="s-toggle"><input type="checkbox" id="s-scope-connect" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
-          <button class="s-delete-btn" onclick="clearCache('connect')">삭제</button>
+        <div class="settings-row">
+          <div><div class="settings-row-label" data-i18n="sc-connect">연결 모드</div><div class="settings-row-sub">Connect Mode</div></div>
+          <button class="shortcut-btn" id="sc-toggleConnectMode" onclick="recordShortcut('toggleConnectMode',this)">C</button>
         </div>
-      </div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">키워드 검색 기록</div><div class="settings-row-sub">검색 히스토리</div></div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <label class="s-toggle"><input type="checkbox" id="s-scope-search" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
-          <button class="s-delete-btn" onclick="clearCache('search')">삭제</button>
+        <div class="settings-row">
+          <div><div class="settings-row-label" data-i18n="sc-fit">화면 맞춤</div><div class="settings-row-sub">Fit to View</div></div>
+          <button class="shortcut-btn" id="sc-fitGraph" onclick="recordShortcut('fitGraph',this)">Space</button>
         </div>
-      </div>
-      <div class="settings-row"><span class="settings-row-label">전체 캐시</span><button class="s-delete-btn" onclick="clearCache('all')">전체 삭제</button></div>
-    </div>
-
-    <!-- 키보드 단축키 -->
-    <div class="settings-section">
-      <div class="settings-section-title">키보드 단축키 <span style="font-size:9px;color:rgba(255,255,255,0.25);font-weight:400;letter-spacing:0;">(버튼 클릭 후 원하는 키 입력)</span></div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">제목 표시</div><div class="settings-row-sub">Toggle Labels</div></div>
-        <button class="shortcut-btn" id="sc-toggleLabels" onclick="recordShortcut('toggleLabels',this)">T</button>
-      </div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">포커스 모드</div><div class="settings-row-sub">Focus Mode</div></div>
-        <button class="shortcut-btn" id="sc-toggleFocusMode" onclick="recordShortcut('toggleFocusMode',this)">F</button>
-      </div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">연결 모드</div><div class="settings-row-sub">Connect Mode</div></div>
-        <button class="shortcut-btn" id="sc-toggleConnectMode" onclick="recordShortcut('toggleConnectMode',this)">C</button>
-      </div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">화면 맞춤</div><div class="settings-row-sub">Fit to View</div></div>
-        <button class="shortcut-btn" id="sc-fitGraph" onclick="recordShortcut('fitGraph',this)">Space</button>
-      </div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">패널 숨기기</div><div class="settings-row-sub">Hide Panel</div></div>
-        <button class="shortcut-btn fixed-key">Esc</button>
-      </div>
-      <div class="settings-row">
-        <div><div class="settings-row-label">노드 고정 / 해제</div><div class="settings-row-sub">Pin / Unpin Node</div></div>
-        <button class="shortcut-btn fixed-key">더블클릭</button>
+        <div class="settings-row">
+          <div><div class="settings-row-label" data-i18n="sc-hide">패널 숨기기</div><div class="settings-row-sub">Esc (fixed)</div></div>
+          <button class="shortcut-btn fixed-key">Esc</button>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label" data-i18n="sc-pin">노드 고정 / 해제</div><div class="settings-row-sub">Pin / Unpin Node</div></div>
+          <button class="shortcut-btn fixed-key" data-i18n="sc-dblclick">더블클릭</button>
+        </div>
       </div>
     </div>
 
-    <button class="settings-close-btn" onclick="closeSettings()">닫기</button>
+    <!-- 저장 & 캐시 (접기/펼치기) -->
+    <div class="settings-section">
+      <div class="settings-section-title s-collapsible" onclick="toggleSection('storage')">
+        <span data-i18n="s-storage">저장 &amp; 캐시</span>
+        <span class="s-arrow" id="arrow-storage">▾</span>
+      </div>
+      <div class="s-section-body" id="section-storage">
+        <div class="settings-row">
+          <div>
+            <div class="settings-row-label" data-i18n="s-local">로컬 저장 사용</div>
+            <div class="settings-row-sub" data-i18n="s-local-sub">브라우저를 닫아도 데이터가 유지됩니다</div>
+          </div>
+          <label class="s-toggle">
+            <input type="checkbox" id="s-local-toggle" onchange="onStorageToggle(this)">
+            <div class="s-toggle-track"></div>
+            <div class="s-toggle-thumb"></div>
+          </label>
+        </div>
+        <div class="s-warn" id="s-local-warn">⚠ API 토큰이 이 기기의 브라우저에 저장됩니다. 공용 컴퓨터에서는 사용을 권장하지 않습니다.</div>
+        <div style="height:10px;"></div>
+        <div class="settings-row">
+          <div><div class="settings-row-label" data-i18n="s-page-cache">페이지 캐시</div><div class="settings-row-sub" data-i18n="s-page-cache-sub">불러온 노션 페이지 내용</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <label class="s-toggle"><input type="checkbox" id="s-scope-pages" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+            <button class="s-delete-btn" onclick="clearCache('pages')" data-i18n="s-del">삭제</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label" data-i18n="s-connect-cache">연결 모드 캐시</div><div class="settings-row-sub" data-i18n="s-connect-cache-sub">수동 연결 엣지</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <label class="s-toggle"><input type="checkbox" id="s-scope-connect" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
+            <button class="s-delete-btn" onclick="clearCache('connect')" data-i18n="s-del">삭제</button>
+          </div>
+        </div>
+        <div class="settings-row"><span class="settings-row-label" data-i18n="s-all-cache">전체 캐시</span><button class="s-delete-btn" onclick="clearCache('all')" data-i18n="s-del-all">전체 삭제</button></div>
+      </div>
+    </div>
+
+    <button class="settings-close-btn" onclick="closeSettings()" data-i18n="s-close-btn">닫기</button>
   </div>
 </div>
 <div id="detail-panel">
@@ -693,7 +716,6 @@ if (_savedToken) {
     setTimeout(initSidebarPageList, 600);
     setTimeout(loadProfile, 400);
     setTimeout(restoreSlider, 200);
-    setTimeout(restoreSearchHistory, 300);
   });
 }
 
@@ -1848,9 +1870,8 @@ function addHistory(kw){
   _searchHistory.unshift(kw);
   if(_searchHistory.length>MAX_HISTORY) _searchHistory.pop();
   renderSearchHistory();
-  saveSearchHistory();
 }
-function deleteHistory(idx,e){e.stopPropagation();_searchHistory.splice(idx,1);renderSearchHistory();saveSearchHistory();}
+function deleteHistory(idx,e){e.stopPropagation();_searchHistory.splice(idx,1);renderSearchHistory();}
 
 function doSearch(kw){
   searchKeyword=kw.trim().toLowerCase();
@@ -1947,6 +1968,66 @@ canvas.addEventListener('dblclick',e=>{
     canvas._st=setTimeout(()=>{s.textContent='';},1800);
   }
 });
+
+// ── 언어 시스템 ──
+const LANG = {
+  ko: {
+    'pg-add':'페이지 추가','kw-search':'키워드 검색','graph-cfg':'그래프 설정',
+    'lbl-title':'제목 표시 (Title Mark)','lbl-focus':'포커스 모드 (Focus Mode)',
+    'lbl-connect':'연결 모드 (Connect Mode)','lbl-fit':'화면 맞춤(Fit to View)',
+    'lbl-export':'이미지 내보내기(Export PNG)','lbl-repulsion':'노드 반발력 (Repulsion)','lbl-gravity':'중력 (Gravity)',
+    'btn-add':'+ 노드 불러오기','ph-add':'노션 링크 붙여넣기 or .MD파일 불러오기','ph-search':'키워드 검색',
+    'btn-sync-all':'전체 동기화','btn-close-all':'전체 닫기',
+    's-lang':'언어 / Language','s-lang-label':'언어','s-lang-sub':'앱 UI 언어를 변경합니다',
+    's-api':'API 토큰','sc-save':'저장','sc-placeholder-token':'새 토큰 입력...',
+    's-imgsize':'이미지 저장 크기',
+    's-shortcuts':'키보드 단축키','s-shortcuts-hint':'버튼 클릭 후 원하는 키 입력',
+    'sc-lbl':'제목 표시','sc-focus':'포커스 모드','sc-connect':'연결 모드',
+    'sc-fit':'화면 맞춤','sc-hide':'패널 숨기기','sc-pin':'노드 고정 / 해제','sc-dblclick':'더블클릭',
+    's-storage':'저장 & 캐시','s-local':'로컬 저장 사용','s-local-sub':'브라우저를 닫아도 데이터가 유지됩니다',
+    's-page-cache':'페이지 캐시','s-page-cache-sub':'불러온 노션 페이지 내용',
+    's-connect-cache':'연결 모드 캐시','s-connect-cache-sub':'수동 연결 엣지',
+    's-all-cache':'전체 캐시','s-del':'삭제','s-del-all':'전체 삭제','s-close-btn':'닫기',
+  },
+  en: {
+    'pg-add':'Add Page','kw-search':'Search','graph-cfg':'Graph Settings',
+    'lbl-title':'Title Mark','lbl-focus':'Focus Mode',
+    'lbl-connect':'Connect Mode','lbl-fit':'Fit to View',
+    'lbl-export':'Export PNG','lbl-repulsion':'Repulsion','lbl-gravity':'Gravity',
+    'btn-add':'+ Load Nodes','ph-add':'Paste Notion link or import .MD','ph-search':'Search keywords',
+    'btn-sync-all':'Sync All','btn-close-all':'Close All',
+    's-lang':'Language','s-lang-label':'Language','s-lang-sub':'Change app UI language',
+    's-api':'API Token','sc-save':'Save','sc-placeholder-token':'Enter new token...',
+    's-imgsize':'Export Image Size',
+    's-shortcuts':'Keyboard Shortcuts','s-shortcuts-hint':'Click a button, then press a key',
+    'sc-lbl':'Toggle Labels','sc-focus':'Focus Mode','sc-connect':'Connect Mode',
+    'sc-fit':'Fit to View','sc-hide':'Hide Panel','sc-pin':'Pin / Unpin Node','sc-dblclick':'Double-click',
+    's-storage':'Storage & Cache','s-local':'Use Local Storage','s-local-sub':'Data persists after browser is closed',
+    's-page-cache':'Page Cache','s-page-cache-sub':'Loaded Notion page content',
+    's-connect-cache':'Connect Cache','s-connect-cache-sub':'Manual edge connections',
+    's-all-cache':'All Cache','s-del':'Delete','s-del-all':'Delete All','s-close-btn':'Close',
+  }
+};
+let _lang = localStorage.getItem('snlog_lang') || 'ko';
+function t(key){ return (LANG[_lang]||LANG.ko)[key] || (LANG.ko[key]||key); }
+function setLang(lang){
+  _lang=lang; localStorage.setItem('snlog_lang',lang);
+  applyLang();
+}
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ const v=t(el.dataset.i18n); if(v) el.textContent=v; });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ const v=t(el.dataset.i18nPh); if(v) el.placeholder=v; });
+  ['ko','en'].forEach(l=>{ document.getElementById('lang-btn-'+l)?.classList.toggle('active',_lang===l); });
+}
+function toggleSection(id){
+  const body=document.getElementById('section-'+id);
+  const arrow=document.getElementById('arrow-'+id);
+  if(!body) return;
+  const isOpen=body.style.display!=='none';
+  body.style.display=isOpen?'none':'';
+  if(arrow) arrow.textContent=isOpen?'▸':'▾';
+  localStorage.setItem('snlog_sec_'+id, isOpen?'0':'1');
+}
 
 // ── 단축키 시스템 ──
 const DEFAULT_SHORTCUTS = { toggleLabels:'t', toggleFocusMode:'f', toggleConnectMode:'c', fitGraph:' ' };
@@ -2067,7 +2148,7 @@ function restoreSearchHistory() {
 let _useLocalStorage = localStorage.getItem('snlog_use_local') === 'true';
 let _storageScopes = (() => { try { return JSON.parse(localStorage.getItem('snlog_scopes') || '{}'); } catch(e) { return {}; } })();
 // 기본값 보장
-['pages','slider','connect','search'].forEach(k => { if (_storageScopes[k] === undefined) _storageScopes[k] = true; });
+['pages','slider','connect'].forEach(k => { if (_storageScopes[k] === undefined) _storageScopes[k] = true; });
 let _exportSize = parseInt(localStorage.getItem('snlog_export_size') || '2048');
 
 function getStorage(scope) {
@@ -2143,7 +2224,7 @@ function openSettings() {
   if (warn) warn.style.display = _useLocalStorage ? 'block' : 'none';
 
   // 범위 토글
-  ['pages','connect','search'].forEach(k => {
+  ['pages','connect'].forEach(k => {
     const el = document.getElementById(`s-scope-${k}`);
     if (el) el.checked = _storageScopes[k] !== false;
   });
@@ -2160,6 +2241,20 @@ function openSettings() {
     if(btn) btn.textContent=formatKey(_shortcuts[action]);
   });
 
+  // 언어 버튼 상태
+  ['ko','en'].forEach(l=>{ document.getElementById('lang-btn-'+l)?.classList.toggle('active',_lang===l); });
+
+  // 섹션 접기/펼치기 상태 복원
+  ['shortcuts','storage'].forEach(id=>{
+    const saved=localStorage.getItem('snlog_sec_'+id);
+    const body=document.getElementById('section-'+id);
+    const arrow=document.getElementById('arrow-'+id);
+    if(!body) return;
+    const isOpen=saved!=='0';
+    body.style.display=isOpen?'':'none';
+    if(arrow) arrow.textContent=isOpen?'▾':'▸';
+  });
+
   document.getElementById('settings-modal').classList.add('open');
 }
 
@@ -2172,7 +2267,7 @@ function closeSettings() {
   }
   document.getElementById('settings-modal').classList.remove('open');
   // 범위 저장
-  ['pages','connect','search'].forEach(k => {
+  ['pages','connect'].forEach(k => {
     const el = document.getElementById(`s-scope-${k}`);
     if (el) _storageScopes[k] = el.checked;
   });
@@ -2251,6 +2346,7 @@ function getChildCount(nodeId) {
 }
 
 updateConfig();
+applyLang();
 function loop(){ simulate(); draw(); requestAnimationFrame(loop); }
 
 </script>
