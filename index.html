@@ -477,33 +477,31 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
       </div>
       <div class="s-section-body" id="section-storage">
         <div class="settings-row">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <label class="s-toggle">
-              <input type="checkbox" id="s-local-toggle" onchange="onStorageToggle(this)">
-              <div class="s-toggle-track"></div>
-              <div class="s-toggle-thumb"></div>
-            </label>
-            <div>
-              <div class="settings-row-label" data-i18n="s-local">로컬 저장 사용</div>
-              <div class="settings-row-sub" data-i18n="s-local-sub">브라우저를 닫아도 데이터가 유지됩니다</div>
-            </div>
+          <div>
+            <div class="settings-row-label" data-i18n="s-local">로컬 저장 사용</div>
+            <div class="settings-row-sub" data-i18n="s-local-sub">브라우저를 닫아도 데이터가 유지됩니다</div>
           </div>
+          <label class="s-toggle">
+            <input type="checkbox" id="s-local-toggle" onchange="onStorageToggle(this)">
+            <div class="s-toggle-track"></div>
+            <div class="s-toggle-thumb"></div>
+          </label>
         </div>
         <div class="s-warn" id="s-local-warn" data-i18n="s-local-warn">⚠ API 토큰이 이 기기의 브라우저에 저장됩니다. 공용 컴퓨터에서는 사용을 권장하지 않습니다.</div>
         <div style="height:10px;"></div>
         <div class="settings-row">
-          <div style="display:flex;align-items:center;gap:10px;">
+          <div><div class="settings-row-label" data-i18n="s-page-cache">페이지 캐시</div><div class="settings-row-sub" data-i18n="s-page-cache-sub">불러온 노션 페이지 내용</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">
             <label class="s-toggle"><input type="checkbox" id="s-scope-pages" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
-            <div><div class="settings-row-label" data-i18n="s-page-cache">페이지 캐시</div><div class="settings-row-sub" data-i18n="s-page-cache-sub">불러온 노션 페이지 내용</div></div>
+            <button class="s-delete-btn" onclick="clearCache('pages')" data-i18n="s-del">삭제</button>
           </div>
-          <button class="s-delete-btn" onclick="clearCache('pages')" data-i18n="s-del">삭제</button>
         </div>
         <div class="settings-row">
-          <div style="display:flex;align-items:center;gap:10px;">
+          <div><div class="settings-row-label" data-i18n="s-connect-cache">연결 모드 캐시</div><div class="settings-row-sub" data-i18n="s-connect-cache-sub">수동 연결 엣지</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">
             <label class="s-toggle"><input type="checkbox" id="s-scope-connect" checked><div class="s-toggle-track"></div><div class="s-toggle-thumb"></div></label>
-            <div><div class="settings-row-label" data-i18n="s-connect-cache">연결 모드 캐시</div><div class="settings-row-sub" data-i18n="s-connect-cache-sub">수동 연결 엣지</div></div>
+            <button class="s-delete-btn" onclick="clearCache('connect')" data-i18n="s-del">삭제</button>
           </div>
-          <button class="s-delete-btn" onclick="clearCache('connect')" data-i18n="s-del">삭제</button>
         </div>
         <div class="settings-row"><span class="settings-row-label" data-i18n="s-all-cache">전체 캐시</span><button class="s-delete-btn" onclick="clearCache('all')" data-i18n="s-del-all">전체 삭제</button></div>
       </div>
