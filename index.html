@@ -581,7 +581,7 @@ function updateConfig() {
   vRep.textContent = Math.round(parseFloat(cfgRep.value) / 100);
   vGrav.textContent = Math.round(parseFloat(cfgGrav.value) * 10000);
   isStable = false;
-  // 슬라이더 수치 저장
+  nodes.forEach(n => { n._frozen = false; n._frozenFrames = 0; });
   snSet('snlog_slider', JSON.stringify({ rep: cfgRep.value, grav: cfgGrav.value }), 'slider');
 }
 cfgRep.addEventListener('input', updateConfig);
