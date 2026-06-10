@@ -549,7 +549,9 @@ document.addEventListener('keydown', e => {
   }
   if (e.key === 'Escape') {
     if (document.getElementById('settings-modal').classList.contains('open')) { closeSettings(); return; }
-    if (detailPanel.classList.contains('open')) { hidePanel(); return; }
+    if (detailPanel.classList.contains('open')) { hidePanel(); }
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && !sidebar.classList.contains('collapsed')) { toggleSidebar(); }
     return;
   }
   const tag = document.activeElement?.tagName;

@@ -191,7 +191,7 @@ export default async function handler(req, res) {
             if (useDbNodes) {
               // DB가 2개 이상: DB 이름을 중간 노드로, 하위 페이지를 그 아래에 배치
               const dbTitle = block.child_database?.title || 'Database';
-              markdown += `\n# ${dbTitle}\n`;
+              markdown += `\n[DB_NODE]\n# ${dbTitle}\n`;
               for (let i = 0; i < dbPages.length; i += BATCH) {
                 const batch = dbPages.slice(i, i + BATCH);
                 const results = await Promise.all(batch.map(async dbPage => {
@@ -277,7 +277,7 @@ export default async function handler(req, res) {
               try {
                 const dbPages = await fetchDatabaseChildren(block.id);
                 if (useDb) {
-                  md += `\n# ${block.child_database?.title || 'Database'}\n`;
+                  md += `\n[DB_NODE]\n# ${block.child_database?.title || 'Database'}\n`;
                   for (const p of dbPages) md += `[NOTION_ENTRY:${p.id.replace(/-/g,'')}]\n## ${extractPageTitle(p)}\n`;
                 } else {
                   for (const p of dbPages) md += `[NOTION_ENTRY:${p.id.replace(/-/g,'')}]\n# ${extractPageTitle(p)}\n`;
