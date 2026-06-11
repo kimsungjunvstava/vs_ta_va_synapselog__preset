@@ -393,11 +393,14 @@ canvas.addEventListener('mousedown', e => {
   else { isPanning = true; panStartX = e.clientX; panStartY = e.clientY; panStartOffsetX = panX; panStartOffsetY = panY; canvas.style.cursor = 'grab'; }
 });
 
+let _clickTimer = null;
+
 canvas.addEventListener('mouseup', e => {
   const elapsed = Date.now() - mouseDownTime;
   const n = getNodeAt(e.clientX, e.clientY);
   if (elapsed < 150 && n && n === mouseDownNode && n.level > 0) {
-    if (_connectMode) { handleConnectClick(n); } else { openPanel(n); }
+    if (_connectMode) { handleConnectClick(n); }
+    else { clearTimeout(_clickTimer); _clickTimer = setTimeout(() => openPanel(n), 220); }
   } else if (elapsed < 150 && !n) {
     if (_focusMode) { _focusNodeId = null; nodes.forEach(nd => { nd.dimmed = false; }); isStable = false; }
     if (_connectMode && _connectFirstNode) {
@@ -414,6 +417,7 @@ canvas.addEventListener('mouseup', e => {
 canvas.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; hoveredNode = null; drag = null; isPanning = false; });
 
 canvas.addEventListener('dblclick', e => {
+  clearTimeout(_clickTimer);
   const n = getNodeAt(e.clientX, e.clientY);
   if (!n || n.level === 0) return;
   n.fixed = !n.fixed;
