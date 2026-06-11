@@ -270,7 +270,7 @@ async function restorePageList() {
       } catch(e) { continue; }
     }
     _addedPageIds.add(pageId);
-    mergeGraph(data.title || title, data.markdown || '', pageId);
+    await mergeGraph(data.title || title, data.markdown || '', pageId);
     const listEl = document.getElementById('added-pages-list');
     const item = document.createElement('div');
     item.className = 'added-page-item'; item.dataset.pageId = pageId;

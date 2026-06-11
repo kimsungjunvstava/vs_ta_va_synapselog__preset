@@ -386,7 +386,9 @@ function revealByLevel(nodeIds, onComplete) {
     }, lv * LEVEL_DELAY);
   }
   isStable = false;
-  setTimeout(() => { fitGraph(); if(onComplete) onComplete(); }, maxLevel * LEVEL_DELAY + 600);
+  return new Promise(resolve => {
+    setTimeout(() => { fitGraph(); if(onComplete) onComplete(); resolve(); }, maxLevel * LEVEL_DELAY + 600);
+  });
 }
 
 function fitGraph() {
@@ -476,5 +478,5 @@ function mergeGraph(title, markdown, pageId) {
     edges.push({ from: firstRoot.id, to: newRootNewId, weakLink: true });
   }
   const newNodeIds = new Set(Object.values(idMap));
-  revealByLevel(newNodeIds, restoreFixedPositions);
+  return revealByLevel(newNodeIds, restoreFixedPositions);
 }
