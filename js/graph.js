@@ -83,6 +83,7 @@ function parseMarkdown(text, rootTitle) {
         let nextLine = lines[nextIdx].trim();
         if (!nextLine) { nextIdx++; continue; }
         if (nextLine.startsWith('#')) break;
+        if (nextLine === '[DB_NODE]') break;
         if (nextLine.startsWith('[DB_PAGE]')) break;
         if (nextLine.startsWith('[NOTION_ENTRY:')) break;
         const dateOnlyMatch = nextLine.match(/^-\s*(\d{4}\.\d{2}(?:\.\d{2})?)\s*-$/);
