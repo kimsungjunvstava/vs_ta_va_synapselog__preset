@@ -318,7 +318,7 @@ export default async function handler(req, res) {
                   }
                 } catch(e) {}
               } else {
-                md += `[NOTION_ENTRY:${block.id.replace(/-/g,'')}]\n## ${block.child_page?.title || '하위 페이지'}\n`;
+                md += `[CHILD_PAGE]\n[NOTION_ENTRY:${block.id.replace(/-/g,'')}]\n## ${block.child_page?.title || '하위 페이지'}\n`;
               }
             }
             else if (type === 'child_database') {

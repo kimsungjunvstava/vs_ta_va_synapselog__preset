@@ -60,6 +60,28 @@ function drawStar4(ctx, cx, cy, r) {
   ctx.closePath();
 }
 
+// 하위페이지 노드 — 4방향 X별 (45° 회전)
+function drawStarX(ctx, cx, cy, r) {
+  const outer = r * 1.2, inner = r * 0.38, round = r * 0.18;
+  ctx.beginPath();
+  for (let i = 0; i < 4; i++) {
+    const angle = (i * Math.PI / 2) - Math.PI / 4;
+    const nextAngle = angle + Math.PI / 2;
+    const ox = cx + Math.cos(angle) * outer, oy = cy + Math.sin(angle) * outer;
+    const ia = angle + Math.PI / 4;
+    const ix = cx + Math.cos(ia) * inner, iy = cy + Math.sin(ia) * inner;
+    const nox = cx + Math.cos(nextAngle) * outer, noy = cy + Math.sin(nextAngle) * outer;
+    const d1x = ix - ox, d1y = iy - oy, l1 = Math.sqrt(d1x*d1x + d1y*d1y);
+    const p1x = ix - (d1x/l1)*round, p1y = iy - (d1y/l1)*round;
+    const d2x = nox - ix, d2y = noy - iy, l2 = Math.sqrt(d2x*d2x + d2y*d2y);
+    const p2x = ix + (d2x/l2)*round, p2y = iy + (d2y/l2)*round;
+    if (i === 0) ctx.moveTo(ox, oy); else ctx.lineTo(ox, oy);
+    ctx.lineTo(p1x, p1y);
+    ctx.quadraticCurveTo(ix, iy, p2x, p2y);
+  }
+  ctx.closePath();
+}
+
 function hslColor(h, s, l) { return `hsl(${Math.round(h)}, ${Math.round(s)}%, ${Math.round(l)}%)`; }
 function getH1Color(label) { return hslColor(getBaseHue(label), 75, 65); }
 

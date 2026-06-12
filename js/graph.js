@@ -60,11 +60,13 @@ function parseMarkdown(text, rootTitle) {
   const lines = text.split('\n');
   let pendingEntryId = null;
   let pendingIsDbNode = false;
+  let pendingIsChildPage = false;
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i].trim();
     if (!line || line.startsWith('---') || line.startsWith('<')) continue;
     if (line === '[DB_NODE]') { pendingIsDbNode = true; continue; }
+    if (line === '[CHILD_PAGE]') { pendingIsChildPage = true; continue; }
     const entryMarker = line.match(/^\[NOTION_ENTRY:([a-f0-9]+)\]$/);
     if (entryMarker) { pendingEntryId = entryMarker[1]; continue; }
     const headerMatch = line.match(/^(#{1,5})\s+(.*)$/);
@@ -96,6 +98,7 @@ function parseMarkdown(text, rootTitle) {
       if (curId) {
         if (pendingEntryId) { nodeMap[curId].entryNotionId = pendingEntryId; pendingEntryId = null; }
         if (pendingIsDbNode) { nodeMap[curId].isDbNode = true; pendingIsDbNode = false; }
+        if (pendingIsChildPage) { nodeMap[curId].isChildPage = true; pendingIsChildPage = false; }
         currentParents[depth] = curId;
         for (let d = depth + 1; d <= 5; d++) currentParents[d] = null;
       }
@@ -281,6 +284,7 @@ function draw() {
     }
     if(n.level===0) drawStar8(ctx, n.x, n.y, r);
     else if(n.isDbNode) drawStar4(ctx, n.x, n.y, r);
+    else if(n.isChildPage) drawStarX(ctx, n.x, n.y, r);
     else { ctx.beginPath(); ctx.arc(n.x,n.y,r,0,Math.PI*2); }
     if(isMatch) { ctx.fillStyle='#ffffff'; ctx.strokeStyle='rgba(255,255,255,0)'; ctx.lineWidth=0; ctx.fill(); }
     else if(n.level===0) { ctx.fillStyle='#ffffff'; ctx.strokeStyle='rgba(255,255,255,0)'; ctx.lineWidth=0; ctx.fill(); }
