@@ -178,9 +178,7 @@ export default async function handler(req, res) {
           if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1, skipDb);
           continue;
         } else if (type === 'child_page') {
-          const childTitle = block.child_page?.title || '하위 페이지';
-          markdown += `\n## ${childTitle}\n`;
-          if (block.has_children) markdown += await fetchBlocks(block.id, depth + 1, skipDb);
+          markdown += `[CHILD_PAGE]\n[NOTION_ENTRY:${block.id.replace(/-/g,'')}]\n## ${block.child_page?.title || '하위 페이지'}\n`;
           continue;
         } else if (type === 'child_database') {
           if (skipDb) continue;

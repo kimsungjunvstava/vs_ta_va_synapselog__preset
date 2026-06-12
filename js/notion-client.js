@@ -344,12 +344,17 @@ function _addEntryChildNodes(entryNode, markdown) {
   let nid = 0;
   const newIds = new Set();
   const currentParents = { 0: entryNode.id };
+  let pendingIsChildPage = false;
+  let pendingEntryId = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (!line || line.startsWith('---') || line.startsWith('[NOTION_ENTRY:')) continue;
+    if (!line || line.startsWith('---')) continue;
+    if (line === '[CHILD_PAGE]') { pendingIsChildPage = true; continue; }
+    const entryMarker = line.match(/^\[NOTION_ENTRY:([a-f0-9]+)\]$/);
+    if (entryMarker) { pendingEntryId = entryMarker[1]; continue; }
     const headerMatch = line.match(/^(#{1,5})\s+(.*)$/);
-    if (!headerMatch) continue;
+    if (!headerMatch) { pendingIsChildPage = false; pendingEntryId = null; continue; }
 
     const mdDepth = Math.min(headerMatch[1].length, 5);
     const graphLevel = Math.min(entryNode.level + mdDepth, 5);
@@ -362,7 +367,7 @@ function _addEntryChildNodes(entryNode, markdown) {
     while (nextIdx < lines.length) {
       const nl = lines[nextIdx].trim();
       if (!nl) { nextIdx++; continue; }
-      if (nl.startsWith('#') || nl.startsWith('[NOTION_ENTRY:')) break;
+      if (nl.startsWith('#') || nl === '[CHILD_PAGE]' || nl.startsWith('[NOTION_ENTRY:')) break;
       if (descLines.join('\n').length > 3000) { nextIdx++; continue; }
       descLines.push(nl); nextIdx++;
     }
@@ -391,6 +396,8 @@ function _addEntryChildNodes(entryNode, markdown) {
       _rgb: hexToRgb(color || '#74b9ff'),
       sourcePageId: entryNode.sourcePageId, visible: false, _frozen: false, _frozenFrames: 0
     };
+    if (pendingEntryId) { n.entryNotionId = pendingEntryId; pendingEntryId = null; }
+    if (pendingIsChildPage) { n.isChildPage = true; pendingIsChildPage = false; }
     nodes.push(n); nodeMap[id] = n;
     edges.push({ from: parentId, to: id });
     newIds.add(id);
@@ -399,6 +406,30 @@ function _addEntryChildNodes(entryNode, markdown) {
     if (nextIdx > i + 1) i = nextIdx - 1;
   }
   return newIds;
+}
+
+async function _loadEntryNode(node, pageId) {
+  if (!_addedPageIds.has(pageId)) return;
+  const cacheKey = `snlog_entry_${node.entryNotionId}`;
+  let md = sessionStorage.getItem(cacheKey);
+  if (!md) {
+    try {
+      const data = await notionFetch({ pageId: node.entryNotionId, action: 'entry' });
+      md = data.markdown || '';
+      if (md) try { sessionStorage.setItem(cacheKey, md); } catch(e) {}
+    } catch(e) { return; }
+  }
+  if (!md) return;
+  const newIds = _addEntryChildNodes(node, md);
+  if (newIds.size > 0) {
+    newIds.forEach(id => { if (nodeMap[id]) nodeMap[id].visible = true; });
+    nodes.forEach(n => { n._frozen = false; n._frozenFrames = 0; });
+    isStable = false;
+    const nestedChildPages = [...newIds].map(id => nodeMap[id]).filter(n => n?.entryNotionId);
+    for (const child of nestedChildPages) await _loadEntryNode(child, pageId);
+  } else {
+    node.desc = cleanDesc(md.replace(/^#{1,5}\s+/gm, '').substring(0, 5000).trim());
+  }
 }
 
 async function _loadEntriesBackground(pageId) {
@@ -417,26 +448,7 @@ async function _loadEntriesBackground(pageId) {
   }
 
   for (const node of entryNodes) {
-    if (!_addedPageIds.has(pageId)) break;
-    const cacheKey = `snlog_entry_${node.entryNotionId}`;
-    let md = sessionStorage.getItem(cacheKey);
-    if (!md) {
-      try {
-        const data = await notionFetch({ pageId: node.entryNotionId, action: 'entry' });
-        md = data.markdown || '';
-        if (md) try { sessionStorage.setItem(cacheKey, md); } catch(e) {}
-      } catch(e) { loaded++; setTag(`로딩 ${loaded}/${total}`); continue; }
-    }
-    if (md) {
-      const newIds = _addEntryChildNodes(node, md);
-      if (newIds.size > 0) {
-        newIds.forEach(id => { if (nodeMap[id]) nodeMap[id].visible = true; });
-        nodes.forEach(n => { n._frozen = false; n._frozenFrames = 0; });
-        isStable = false;
-      } else {
-        node.desc = cleanDesc(md.replace(/^#{1,5}\s+/gm, '').substring(0, 5000).trim());
-      }
-    }
+    await _loadEntryNode(node, pageId);
     loaded++; setTag(`로딩 ${loaded}/${total}`);
   }
 
