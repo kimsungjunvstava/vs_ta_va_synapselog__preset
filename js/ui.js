@@ -414,7 +414,6 @@ canvas.addEventListener('mouseup', e => {
     if (_connectMode) { handleConnectClick(n); }
     else { clearTimeout(_clickTimer); _clickTimer = setTimeout(() => openPanel(n), 220); }
   } else if (elapsed < 150 && n && n === mouseDownNode && n.level === 0) {
-    console.log('[ROOT CLICK] sourcePageId:', n.sourcePageId, '| DOM items:', document.querySelectorAll('.added-page-item').length, [...document.querySelectorAll('.added-page-item')].map(el=>el.dataset.pageId));
     highlightSidebarPage(n.sourcePageId || null);
   } else if (elapsed < 150 && !n) {
     if (_focusMode) { _focusNodeId = null; nodes.forEach(nd => { nd.dimmed = false; }); isStable = false; }
