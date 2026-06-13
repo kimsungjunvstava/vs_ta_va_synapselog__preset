@@ -190,6 +190,7 @@ function highlightSidebarPage(pageId) {
   document.querySelectorAll('.added-page-item').forEach(el => el.classList.remove('focused'));
   if (pageId) {
     const el = document.querySelector(`.added-page-item[data-page-id="${pageId}"]`);
+    console.log('[HIGHLIGHT] pageId:', pageId, '| found:', !!el);
     if (el) { el.classList.add('focused'); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
   }
 }
