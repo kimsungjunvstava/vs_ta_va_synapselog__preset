@@ -92,7 +92,7 @@ function renderPageList(pages) {
     <div class="page-pick-item" data-id="${p.id}" onclick="togglePageSelect('${p.id}', this)"
       style="display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); cursor:pointer; transition:background 0.15s; font-size:13px; color:rgba(255,255,255,0.75);">
       <div style="width:16px; height:16px; border-radius:4px; border:1px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s;" class="pick-check"></div>
-      <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title}</span>
+      <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.title || '(제목 없음)'}</span>
     </div>
   `).join('');
 }
@@ -168,7 +168,7 @@ function renderSidebarPageList(pages) {
     const isActive = _addedPageIds.has(p.id);
     if (isActive) {
       return `<div class="page-list-item active" data-page-id="${p.id}">
-        <span class="item-label" title="${p.title}">${p.title}</span>
+        <span class="item-label" title="${p.title || '(제목 없음)'}">${p.title || '(제목 없음)'}</span>
         <div class="item-actions">
           <button class="btn-sync" title="동기화" onclick="syncPage('${p.id}')">↻</button>
           <button class="btn-remove" onclick="removePage('${p.id}', document.querySelector('[data-page-id=\\'${p.id}\\']'))">✕</button>
@@ -176,7 +176,7 @@ function renderSidebarPageList(pages) {
       </div>`;
     } else {
       return `<div class="page-list-item" data-page-id="${p.id}">
-        <span class="item-label" title="${p.title}" onclick="addPageById('${p.id}')">${p.title}</span>
+        <span class="item-label" title="${p.title || '(제목 없음)'}" onclick="addPageById('${p.id}')">${p.title || '(제목 없음)'}</span>
       </div>`;
     }
   }).join('');
@@ -184,6 +184,14 @@ function renderSidebarPageList(pages) {
 
 function refreshSidebarRender() {
   if (window._sidebarPageList) renderSidebarPageList(window._sidebarPageList);
+}
+
+function highlightSidebarPage(pageId) {
+  document.querySelectorAll('.page-list-item').forEach(el => el.classList.remove('focused'));
+  if (pageId) {
+    const el = document.querySelector(`.page-list-item[data-page-id="${pageId}"]`);
+    if (el) { el.classList.add('focused'); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+  }
 }
 
 // ── 페이지 추가/동기화/제거 ──────────────────────────────────────────

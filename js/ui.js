@@ -288,6 +288,7 @@ function openPanel(n) {
   const toggleBtn = document.getElementById('detail-panel-sidebar-toggle');
   if (toggleBtn) { toggleBtn.classList.add('visible'); toggleBtn.classList.remove('collapsed'); toggleBtn.innerHTML = PANEL_SVG_RIGHT; }
   if (_focusMode) applyFocusMode(n.id, _focusNodeId !== null && !n.dimmed);
+  if (n.level === 0) highlightSidebarPage(n.sourcePageId || null);
 }
 
 function closePanel() {
