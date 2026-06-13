@@ -164,7 +164,8 @@ function renderSidebarPageList(pages) {
   const listEl = document.getElementById('sidebar-page-list');
   if (!listEl) return;
   if (!pages || !pages.length) { listEl.innerHTML = '<div style="font-size:11px; color:rgba(255,255,255,0.25); padding:6px 0; text-align:center;">페이지 없음</div>'; return; }
-  listEl.innerHTML = pages.map(p => {
+  const sorted = [...pages].sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ko', { numeric: true }));
+  listEl.innerHTML = sorted.map(p => {
     const isActive = _addedPageIds.has(p.id);
     if (isActive) {
       return `<div class="page-list-item active" data-page-id="${p.id}">
