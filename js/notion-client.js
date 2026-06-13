@@ -187,11 +187,12 @@ function refreshSidebarRender() {
 }
 
 function highlightSidebarPage(pageId) {
-  document.querySelectorAll('.added-page-item').forEach(el => el.classList.remove('focused'));
-  if (pageId) {
-    const el = document.querySelector(`.added-page-item[data-page-id="${pageId}"]`);
-    if (el) { el.classList.add('focused'); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
-  }
+  document.querySelectorAll('.page-list-item.focused').forEach(el => el.classList.remove('focused'));
+  if (!pageId) return;
+  const normalId = pageId.replace(/-/g, '');
+  const el = [...document.querySelectorAll('.page-list-item[data-page-id]')]
+    .find(el => el.dataset.pageId.replace(/-/g, '') === normalId);
+  if (el) { el.classList.add('focused'); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
 }
 
 // ── 페이지 추가/동기화/제거 ──────────────────────────────────────────
@@ -321,9 +322,7 @@ function removePage(pageId, el) {
 
 function updateBulkActionsVisibility() {
   const bulk = document.getElementById('bulk-actions');
-  const addedList = document.getElementById('added-pages-list');
   if (bulk) bulk.style.display = _addedPageIds.size > 0 ? 'flex' : 'none';
-  if (addedList) addedList.style.display = addedList.children.length > 0 ? 'flex' : 'none';
 }
 
 let _confirmCallback = null;
