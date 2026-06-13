@@ -34,7 +34,7 @@ function startWithMd(event) {
       const list = document.getElementById('added-pages-list');
       const item = document.createElement('div');
       item.className = 'added-page-item'; item.dataset.pageId = pageId;
-      item.innerHTML = `<span>📄 ${title} <span style="color:rgba(255,159,67,0.5);font-size:9px;">MD</span></span><div class="btn-group"><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
+      item.innerHTML = `<span>📄 ${escapeHtml(title)} <span style="color:rgba(255,159,67,0.5);font-size:9px;">MD</span></span><div class="btn-group"><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
       list.appendChild(item);
       updateBulkActionsVisibility(); savePageList();
     }, 100);
@@ -187,9 +187,9 @@ function refreshSidebarRender() {
 }
 
 function highlightSidebarPage(pageId) {
-  document.querySelectorAll('.page-list-item').forEach(el => el.classList.remove('focused'));
+  document.querySelectorAll('.added-page-item').forEach(el => el.classList.remove('focused'));
   if (pageId) {
-    const el = document.querySelector(`.page-list-item[data-page-id="${pageId}"]`);
+    const el = document.querySelector(`.added-page-item[data-page-id="${pageId}"]`);
     if (el) { el.classList.add('focused'); el.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
   }
 }
@@ -240,7 +240,7 @@ async function addPage() {
     const item = document.createElement('div');
     item.className = 'added-page-item'; item.dataset.pageId = pageId;
     const isCached = !!cached && !JSON.parse(cached)._headingsOnly;
-    item.innerHTML = `<span>📄 ${data.title || pageId}${isCached ? ' <span style="color:rgba(255,159,67,0.5);font-size:9px;">캐시</span>' : ''}</span><div class="btn-group"><button class="btn-sync" title="동기화" onclick="syncPage('${pageId}')">↻</button><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
+    item.innerHTML = `<span>📄 ${escapeHtml(data.title || pageId)}${isCached ? ' <span style="color:rgba(255,159,67,0.5);font-size:9px;">캐시</span>' : ''}</span><div class="btn-group"><button class="btn-sync" title="동기화" onclick="syncPage('${pageId}')">↻</button><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
     list.appendChild(item);
     updateBulkActionsVisibility(); savePageList(); refreshSidebarRender();
     _loadEntriesBackground(pageId);
@@ -282,7 +282,7 @@ async function restorePageList() {
     const listEl = document.getElementById('added-pages-list');
     const item = document.createElement('div');
     item.className = 'added-page-item'; item.dataset.pageId = pageId;
-    item.innerHTML = `<span>📄 ${data.title || title} <span style="color:rgba(255,159,67,0.5);font-size:9px;">캐시</span></span><div class="btn-group"><button class="btn-sync" title="동기화" onclick="syncPage('${pageId}')">↻</button><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
+    item.innerHTML = `<span>📄 ${escapeHtml(data.title || title)} <span style="color:rgba(255,159,67,0.5);font-size:9px;">캐시</span></span><div class="btn-group"><button class="btn-sync" title="동기화" onclick="syncPage('${pageId}')">↻</button><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
     listEl.appendChild(item);
     _loadEntriesBackground(pageId);
   }
@@ -482,7 +482,7 @@ function importMarkdownFile(event) {
     const list = document.getElementById('added-pages-list');
     const item = document.createElement('div');
     item.className = 'added-page-item'; item.dataset.pageId = pageId;
-    item.innerHTML = `<span>📄 ${title} <span style="color:rgba(255,159,67,0.5);font-size:9px;">MD</span></span><div class="btn-group"><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
+    item.innerHTML = `<span>📄 ${escapeHtml(title)} <span style="color:rgba(255,159,67,0.5);font-size:9px;">MD</span></span><div class="btn-group"><button class="btn-remove" onclick="removePage('${pageId}', this.closest('.added-page-item'))">✕</button></div>`;
     list.appendChild(item);
     updateBulkActionsVisibility(); savePageList();
   };

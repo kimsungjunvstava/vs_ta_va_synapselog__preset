@@ -114,6 +114,11 @@ function hexToRgb(hex) {
 
 function rgbStr(rgb, a=1) { return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${a})`; }
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 function cleanLabel(str) {
   if (!str) return '';
   return str
