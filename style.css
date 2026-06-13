@@ -77,7 +77,7 @@ input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px;
 #add-page-error { font-size: 10px; color: #ff6b6b; margin-top: 4px; display: none; }
 #added-pages-list { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
 .added-page-item { display: flex; align-items: center; gap: 4px; font-size: 13px; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.04); border-radius: 4px; padding: 4px 7px; }
-.added-page-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+.added-page-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; color: rgba(255,255,255,0.5); transition: color 0.15s; }
 .added-page-item .btn-group { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
 .btn-sync { background: none; border: none; cursor: pointer; font-size: 12px; color: rgba(255,255,255,0.4); padding: 1px 3px; line-height: 1; transition: color 0.2s; }
 .btn-sync:hover { color: rgba(255,255,255,0.8); }

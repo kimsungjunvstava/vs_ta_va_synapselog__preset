@@ -321,7 +321,9 @@ function removePage(pageId, el) {
 
 function updateBulkActionsVisibility() {
   const bulk = document.getElementById('bulk-actions');
+  const addedList = document.getElementById('added-pages-list');
   if (bulk) bulk.style.display = _addedPageIds.size > 0 ? 'flex' : 'none';
+  if (addedList) addedList.style.display = addedList.children.length > 0 ? 'flex' : 'none';
 }
 
 let _confirmCallback = null;
