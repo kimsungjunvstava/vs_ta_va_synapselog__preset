@@ -118,7 +118,7 @@ function cleanLabel(str) {
   if (!str) return '';
   return str
     .replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1')
-    .replace(/[\[\]#`]/g, '').replace(/\{[^}]*\}/g, '').replace(/→|⇒|—/g, '').trim();
+    .replace(/[\[\]#`]/g, '').replace(/\{([^}]*)\}/g, '$1').replace(/→|⇒|—/g, '').trim();
 }
 
 function cleanDesc(str) {
